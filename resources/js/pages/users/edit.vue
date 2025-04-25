@@ -1,18 +1,44 @@
 <script setup lang="ts">
     import AppLayout from '@/layouts/AppLayout.vue';
     import {User, type BreadcrumbItem, type SharedData} from '@/types';
-    import {computed, ref} from 'vue';
+    import {computed, onMounted, ref} from 'vue';
     import {Head, usePage, Link, router} from '@inertiajs/vue3';
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
     import {CircleX} from 'lucide-vue-next';
 
-
     const breadcrumbs: BreadcrumbItem[] = [
         {title: 'Aspirantes', href: '/users'},
-        {title: 'Agregar Aspirante', href: '#'},
+        {title: 'Editar Aspirante', href: '#'},
     ];
+
+    const props = defineProps<{
+    user: {
+        name: string;
+        last_name: string;
+        id_card: string;
+        gender: string;
+        birth_date: string;
+        age: number;
+        ethnicity: string;
+        disable_card: boolean;
+        id_disable_card: string;
+        representative_name: string;
+        representative_last_name: string;
+        representative_id_card: string;
+        phone: string;
+        disability_type: string[];
+        disability_level: string;
+        disability_grade: number;
+        cause_disability: string;
+        diagnosis: string;
+        email: string;
+        user_type: 'admin' | 'doctor' | 'usuario';
+        status: 'aspirante' | 'paciente';
+        // id_address?: Address | null;
+    }
+    }>();
 
     const form = ref<Partial<{
         name: string;
@@ -61,6 +87,10 @@
         status: 'aspirante',
         //id_address: null, // Inicializado como null
     });
+
+    onMounted(() => {
+    form.value = { ...props.user } // Carga los datos recibidos
+})
 
    
     const validateNumberInput = (event: Event) => {
@@ -167,7 +197,6 @@
             },
         });
     };
-
 </script>
 
 <template>

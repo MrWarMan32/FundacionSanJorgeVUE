@@ -5,7 +5,7 @@ import {User, type BreadcrumbItem, type SharedData} from '@/types';
 import {Table, TableBody, TableCell, TableCaption, TableEmpty, TableFooter, TableHeader, TableRow, TableHead} from '@/components/ui/table';
 import {Button} from '@/components/ui/button';
 
-import {Pencil, Trash, UserRoundPlus, Eye, UserCheck} from 'lucide-vue-next';
+import {Pencil, Eye, UserX} from 'lucide-vue-next';
 import {computed} from 'vue';
 
 
@@ -15,29 +15,29 @@ interface UsersPageProps extends SharedData{
 
 const {props} = usePage<UsersPageProps>();
 
-// Filtrar solo aspirantes
+// Filtrar solo pacientes
 const filteredUsers = computed(() => {
     return props.users.filter(user => {
-        return user.user_type === 'usuario' && user.status === 'aspirante';
+        return user.user_type === 'usuario' && user.status === 'paciente';
     });
 });
 
-const convertToPaciente = async (id: number) => {
-    if (confirm('¿Estás seguro de que deseas convertir a este aspirante en paciente?')) {
+const convertToAspirante = async (id: number) => {
+    if (confirm('¿Estás seguro de que deseas convertir a este paciente en aspirante?')) {
         try {
             await router.patch(
-                route('users.convertToPaciente', id),
+                route('patients.convertToAspirante', id),
                 {}, // Datos (vacío, ya que solo estamos actualizando el estado)
                 { // Opciones
                     preserveScroll: true,
                     preserveState: true,
                     onSuccess: () => {
-                        router.visit(route('users.index')); // Recargar la lista para ver el cambio
-                        console.log('Aspirante convertido a paciente con éxito.');
+                        router.visit(route('patients.index')); // Recargar la lista para ver el cambio
+                        console.log('Paciente convertido a aspirante con éxito.');
                     },
                     onError: (errors) => {
-                        console.error('Error al convertir a paciente:', errors);
-                        alert('Hubo un error al intentar convertir a paciente.');
+                        console.error('Error al convertir paciente:', errors);
+                        alert('Hubo un error al intentar convertir a aspirante.');
                     },
                 }
             );
@@ -49,9 +49,10 @@ const convertToPaciente = async (id: number) => {
 };
 
 
+
 const breadcrumbs: BreadcrumbItem[] = [
     
-    {title: 'Aspirantes', href: '/users'}
+    {title: 'Pacientes', href: '/patients'}
 ];
 
 const deleteUser = async (id: number) => {
@@ -75,19 +76,10 @@ const deleteUser = async (id: number) => {
 <template>
     <Head title="Aspirantes" />
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="p-4">
-            <div class="flex">
-                <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
-                    <Link href="/users/create">
-                        <UserRoundPlus /> Agregar Aspirante
-                    </Link>
-                </Button>
-            </div>
-        </div>
-
+       
         <div class="ralative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min">
             <Table>
-               <TableCaption>Lista de Aspirantes</TableCaption>
+               <TableCaption>Lista de Pacientes</TableCaption>
                 <TableHeader>
                     <TableRow>
                         <TableHead class="w-[200px] text-center">Nombres</TableHead>
@@ -125,11 +117,10 @@ const deleteUser = async (id: number) => {
                             </TableCell>
                             <TableCell>{{ user.diagnosis }}</TableCell>
                             <TableCell>{{ user.phone }}</TableCell>
+                            <TableCell class="flex justify-center gap-2">
 
-                            <TableCell class="flex justify-center items-center h-full gap-2">
-
-                                <Button size="sm" class="bg-green-500 text-white hover:bg-green-700" @click="convertToPaciente(user.id)">
-                                    <UserCheck />
+                                <Button size="sm" class="bg-red-500 text-white hover:bg-red-700" @click="convertToAspirante(user.id)">
+                                    <UserX />
                                 </Button>
 
                                 <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
@@ -140,15 +131,11 @@ const deleteUser = async (id: number) => {
                                     <Link :href="`/users/${user.id}/show`"><Eye /></Link>
                                 </Button>
 
-                                <Button size="sm" class="bg-red-500 text-white hover:bg-red-700" @click="deleteUser(user.id)">
-                                    <Trash /> 
-                                </Button>
-
                             </TableCell>
                         </TableRow>
                     </template>
                     <template v-else>
-                        <TableEmpty> No hay aspirantes registrados. </TableEmpty>
+                        <TableEmpty> No hay pacientes registrados. </TableEmpty>
                     </template>
                 </TableBody>
             </Table>

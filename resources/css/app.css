@@ -127,6 +127,42 @@
 }
 
 .dark {
+  --background: hsl(220 30% 15%); /* Azul oscuro para el fondo */
+  --foreground: hsl(220 80% 90%); /* Blanco con ligero tono azulado para el texto general */
+  --card: hsl(220 25% 20%); /* Azul oscuro para las tarjetas */
+  --card-foreground: hsl(220 90% 95%); /* Blanco con ligero tono azulado para el texto de las tarjetas */
+  --popover: hsl(220 25% 18%); /* Azul oscuro para los popovers */
+  --popover-foreground: hsl(220 80% 92%); /* Blanco con ligero tono azulado para el texto de los popovers */
+  --primary: hsl(220 100% 70%); /* Azul primario vibrante */
+  --primary-foreground: hsl(220 100% 95%); /* Blanco para el texto sobre el primario */
+  --secondary: hsl(220 20% 25%); /* Tono secundario azulado más oscuro */
+  --secondary-foreground: hsl(220 80% 90%); /* Blanco con ligero tono azulado para el texto secundario */
+  --muted: hsl(220 15% 18%); /* Tono muted azulado */
+  --muted-foreground: hsl(220 60% 70%); /* Gris azulado para el texto muted */
+  --accent: hsl(220 40% 35%); /* Tono de acento azulado */
+  --accent-foreground: hsl(220 80% 90%); /* Blanco con ligero tono azulado para el texto de acento */
+  --destructive: hsl(0 84% 60%); /* Se mantiene el rojo para acciones destructivas (opcionalmente podrías cambiarlo a un tono azul más oscuro si lo prefieres) */
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(220 20% 30%); /* Borde azulado */
+  --input: hsl(220 20% 25%); /* Fondo de los inputs azulado */
+  --ring: hsl(225 100% 60%); /* Anillo de enfoque azul vibrante (igual al primario) */
+  --chart-1: hsl(220 70% 50%); /* Diferentes tonos de azul para las gráficas */
+  --chart-2: hsl(200 65% 45%);
+  --chart-3: hsl(170 75% 50%);
+  --chart-4: hsl(250 70% 60%);
+  --chart-5: hsl(280 80% 55%);
+  --sidebar-background: hsl(220 30% 12%); /* Fondo de la barra lateral azul oscuro */
+  --sidebar-foreground: hsl(220 80% 85%); /* Texto de la barra lateral blanco azulado */
+  --sidebar-primary: hsl(220 100% 80%); /* Primario de la barra lateral azul vibrante */
+  --sidebar-primary-foreground: hsl(220 100% 95%);
+  --sidebar-accent: hsl(220 40% 25%); /* Acento de la barra lateral azulado */
+  --sidebar-accent-foreground: hsl(220 70% 85%);
+  --sidebar-border: hsl(220 30% 25%); /* Borde de la barra lateral azulado */
+  --sidebar-ring: hsl(220 80% 60%);
+  --sidebar: hsl(220 30% 12%); /* Fondo general de la barra lateral */
+}
+
+/* .dark {
   --background: hsl(0 0% 3.9%);
   --foreground: hsl(0 0% 98%);
   --card: hsl(0 0% 3.9%);
@@ -159,9 +195,8 @@
   --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
   --sidebar-border: hsl(0 0% 15.9%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
-  --sidebar:
-    hsl(240 5.9% 10%);
-}
+  --sidebar:hsl(240 5.9% 10%);
+} */
 
 @layer base {
     * {

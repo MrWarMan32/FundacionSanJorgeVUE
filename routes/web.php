@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\CantonController;
 use App\Http\Controllers\ParishController;
+use App\Http\Controllers\PatientController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -27,7 +28,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
     // Pacientes Routes
-    Route::get('/patients', [UserController::class, 'index'])->name('patients.index');
+    Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
@@ -55,6 +56,8 @@ Route::middleware(['auth'])->group(function () {
 
     //ruta para convertir un usuario a paciente
     Route::patch('/users/{user}/convert-to-paciente', [UserController::class, 'convertToPaciente'])->name('users.convertToPaciente');
+    //ruta para convertir un paciente a usuario 
+    Route::patch('/users/{user}/convert-to-aspirante', [PatientController::class, 'convertToAspirante'])->name('patients.convertToAspirante');
 });
 
 require __DIR__.'/settings.php';

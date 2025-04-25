@@ -59,6 +59,7 @@ class UserController extends Controller
         ]);
 
         $disabilityTypes = $request->input('disability_type', []);
+        
         $encodedDisabilityTypes = json_encode(array_filter(array_map('trim', $disabilityTypes)));
 
         $userData = [
@@ -69,7 +70,7 @@ class UserController extends Controller
             'birth_date' => $request->birth_date,
             'age' => $request->age,
             'ethnicity' => $request->ethnicity,
-            'disable_card' => $request->disable_card,
+            'disable_card' => $request->boolean('disable_card'),
             'id_disable_card' => $request->id_disable_card,
             'representative_name' => $request->representative_name,
             'representative_last_name' => $request->representative_last_name,
@@ -105,17 +106,70 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit( User $user)
     {
-        //
+        return Inertia::render('users/edit', [
+            'user' => $user,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|min:3|max:255|alpha',
+            'last_name' => 'nullable|string|max:255',
+            'id_card' => 'nullable|string|max:20',
+            'gender' => 'nullable|string|max:50',
+            'birth_date' => 'nullable|date',
+            'age' => 'nullable|integer|min:0',
+            'ethnicity' => 'nullable|string|max:100',
+            'disable_card' => 'nullable|boolean',
+            'id_disable_card' => 'nullable|string|max:20',
+            'representative_name' => 'nullable|string|max:255',
+            'representative_last_name' => 'nullable|string|max:255',
+            'representative_id_card' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|max:20',
+            'disability_type' => 'nullable|array',
+            'disability_type.*' => 'nullable|string|max:255',
+            'disability_level' => 'nullable|string|max:100',
+            'disability_grade' => 'nullable|integer|min:0|max:100',
+            'cause_disability' => 'nullable|string|max:255',
+            'diagnosis' => 'nullable|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            //'id_address' => 'nullable|exists:addresses,id',
+        ]);
+
+        $disabilityTypes = $request->input('disability_type', []);
+        
+        $encodedDisabilityTypes = json_encode(array_filter(array_map('trim', $disabilityTypes)));
+    
+        $user->update([
+            'name' => $request->name,
+            'last_name' => $request->last_name,
+            'id_card' => $request->id_card,
+            'gender' => $request->gender,
+            'birth_date' => $request->birth_date,
+            'age' => $request->age,
+            'ethnicity' => $request->ethnicity,
+            'disable_card' => $request->disable_card,
+            'id_disable_card' => $request->id_disable_card,
+            'representative_name' => $request->representative_name,
+            'representative_last_name' => $request->representative_last_name,
+            'representative_id_card' => $request->representative_id_card,
+            'phone' => $request->phone,
+            'disability_type' => $encodedDisabilityTypes,
+            'disability_level' => $request->disability_level,
+            'disability_grade' => $request->disability_grade,
+            'cause_disability' => $request->cause_disability,
+            'diagnosis' => $request->diagnosis,
+            'email' => $request->email,
+            //'id_address' => $request->id_address,
+        ]);
+    
+        return Redirect::route('users.index')->with('success', 'Aspirante actualizado con éxito.');
     }
 
     /**
@@ -130,6 +184,9 @@ class UserController extends Controller
         ])->with('success', 'Usuario eliminado.');
     }
 
+    /**
+     * Convert a user to a patient.
+     */
     public function convertToPaciente(Request $request, User $user)
     {
         if ($user->status === 'aspirante') {
