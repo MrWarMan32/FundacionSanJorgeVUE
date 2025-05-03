@@ -5,8 +5,10 @@ import {User, type BreadcrumbItem, type SharedData} from '@/types';
 import {Table, TableBody, TableCell, TableCaption, TableEmpty, TableFooter, TableHeader, TableRow, TableHead} from '@/components/ui/table';
 import {Button} from '@/components/ui/button';
 
-import {Pencil, Trash, UserRoundPlus, Eye, UserCheck} from 'lucide-vue-next';
+import {Pencil, Trash, UserRoundPlus, UserCheck, MapPinPlus} from 'lucide-vue-next';
 import {computed} from 'vue';
+import Swal from 'sweetalert2';
+
 
 
 interface UsersPageProps extends SharedData{
@@ -23,29 +25,65 @@ const filteredUsers = computed(() => {
 });
 
 const convertToPaciente = async (id: number) => {
-    if (confirm('¿Estás seguro de que deseas convertir a este aspirante en paciente?')) {
-        try {
-            await router.patch(
-                route('users.convertToPaciente', id),
-                {}, // Datos (vacío, ya que solo estamos actualizando el estado)
-                { // Opciones
-                    preserveScroll: true,
-                    preserveState: true,
-                    onSuccess: () => {
-                        router.visit(route('users.index')); // Recargar la lista para ver el cambio
-                        console.log('Aspirante convertido a paciente con éxito.');
-                    },
-                    onError: (errors) => {
-                        console.error('Error al convertir a paciente:', errors);
-                        alert('Hubo un error al intentar convertir a paciente.');
-                    },
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: '¿Deseas convertir a este aspirante en paciente?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, convertir',
+    cancelButtonText: 'No, cancelar',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        await router.patch(
+          route('users.convertToPaciente', id),
+          {},
+          {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+              router.visit(route('users.index'));
+              Swal.fire(
+                '¡Convertido!',
+                'El aspirante ha sido convertido en paciente.',
+                'success'
+              );
+              console.log('Aspirante convertido a paciente con éxito.');
+            },
+            onError: (errors) => {
+              console.error('Error al convertir a paciente:', errors);
+              let errorMessage = 'Hubo un error al intentar convertir a paciente.';
+                if (errors && typeof errors === 'object') {
+                    for (const key in errors) {
+                        const errorValue = errors[key];
+                            if (Array.isArray(errorValue)) {
+                                errorMessage += `<br><strong>${key}:</strong> ${errorValue.join(', ')}`;
+                            } else {
+                                errorMessage += `<br><strong>${key}:</strong> ${errorValue}`;
+                            }
+                    }
                 }
-            );
-        } catch (error: any) {
-            console.error('Error inesperado:', error);
-            alert('Ocurrió un error inesperado.');
-        }
+              Swal.fire({
+                title: 'Error',
+                html: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'Ok'
+              });
+            },
+          }
+        );
+      } catch (error: any) {
+        console.error('Error inesperado:', error);
+        Swal.fire( 
+          '¡Error!',
+          'Ocurrió un error inesperado.',
+          'error'
+        );
+      }
     }
+  });
 };
 
 
@@ -55,20 +93,56 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const deleteUser = async (id: number) => {
-    if (confirm('¿Estás seguro de que deseas eliminar este aspirante?')) {
-        router.delete(route('users.destroy', id), {
-            preserveScroll: true,
-            preserveState: true,
-            onSuccess: () => {
-                router.visit(route('users.index'));
-                console.log('Aspirante eliminado con éxito.');
-            },
-            onError: () => {
-                console.error('Error al eliminar el aspirante.');
+    Swal.fire({
+        title: '¿Eliminar Aspirante?',
+        text: 'Esta acción no se puede deshacer!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'No, cancelar',
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                await router.delete(route('users.destroy', id), {
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => {
+                        router.visit(route('users.index'));
+                        Swal.fire(
+                            '¡Eliminado!',
+                            'El aspirante ha sido eliminado con éxito.',
+                            'success'
+                        );
+                        console.log('Aspirante eliminado con éxito.');
+                    },
+                    onError: (errors) => {
+                        let errorMessage = 'Hubo un error al intentar eliminar al aspirante.';
+                        if (errors && typeof errors === 'object') {
+                            for (const key in errors) {
+                                const errorValue = errors[key];
+                                errorMessage += `<br><strong>${key}:</strong> ${Array.isArray(errorValue) ? errorValue.join(', ') : errorValue}`;
+                            }
+                        }
+                        Swal.fire({
+                            title: 'Error',
+                            html: errorMessage,
+                            icon: 'error',
+                            confirmButtonText: 'Ok',
+                        });
+                    },
+                });
+            } catch (error: any) {
+                Swal.fire(
+                    '¡Error!',
+                    'Ocurrió un error inesperado.',
+                    'error'
+                );
             }
-        });
-    }
-};  
+        }
+    });
+};
 
 </script>
 
@@ -133,11 +207,15 @@ const deleteUser = async (id: number) => {
                                 </Button>
 
                                 <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
-                                    <Link :href="`/users/${user.id}/edit`"><Pencil /></Link>
+                                    <Link :href="route('users.edit', { user: user.id })">
+                                        <Pencil />
+                                    </Link>
                                 </Button>
-                                
-                                <Button as-child size="sm" class="bg-yellow-500 text-white hover:bg-yellow-700">
-                                    <Link :href="`/users/${user.id}/show`"><Eye /></Link>
+
+                                <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
+                                    <Link :href="route('addresses.edit', { id_user: user.id })">
+                                        <MapPinPlus />
+                                    </Link>
                                 </Button>
 
                                 <Button size="sm" class="bg-red-500 text-white hover:bg-red-700" @click="deleteUser(user.id)">

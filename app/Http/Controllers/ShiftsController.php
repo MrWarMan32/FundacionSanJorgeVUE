@@ -2,24 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Canton;
-use App\Models\Parish;
-use Illuminate\Http\JsonResponse;
+use App\Models\Shifts;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
-class ParishController extends Controller
+class ShiftsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
-    }
-
-    public function indexByCanton(Canton $canton): JsonResponse
-    {
-        return response()->json($canton->parishes);
+        return Inertia::render('shifts/index', [
+            'therapy' => Shifts::all(),
+        ]);
     }
 
     /**
@@ -41,9 +37,9 @@ class ParishController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Parish $parish): JsonResponse
+    public function show(string $id)
     {
-        return response()->json($parish);
+        //
     }
 
     /**

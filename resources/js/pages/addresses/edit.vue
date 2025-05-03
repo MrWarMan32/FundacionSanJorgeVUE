@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, watch, reactive } from 'vue';
-import { Head, router, usePage} from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Address, User } from '@/types';
-import {type BreadcrumbItem} from '@/types';
+import { type BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,34 +11,33 @@ import Swal from 'sweetalert2';
 import { PageProps } from '@inertiajs/core';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    {title: 'Aspirantes', href: '/users'},
-    {title: 'Agregar Aspirante', href: '/users/create'},
-    {title: 'Agregar Direccion', href: '#'},
+  { title: 'Aspirantes', href: '/users' },
+  { title: 'Editar Dirección', href: '#' },
 ];
 
-interface CreatePageProps extends PageProps {
-  id_user?: number;
+interface EditPageProps extends PageProps {
+  address: Address;
+  user: User;
   users: User[];
   provinces: { id: number; name_province: string }[];
   cantons: { id: number; name_canton: string; id_province: number }[];
   parishes: { id: number; parroquia: string; id_canton: number }[];
 }
 
-const { props } = usePage<CreatePageProps>();
+const { props } = usePage<EditPageProps>();
 
 const form = reactive({
-  id: 0,
-  id_user: props.id_user ?? null,
-  id_province: null,
-  id_canton: null,
-  id_parish: null,
-  site: '',
-  principal_street: '',
-  secondary_street: '',
-  reference: '',
+  id: props.address.id,
+  id_user: props.address.id_user,
+  id_province: props.address.id_province,
+  id_canton: props.address.id_canton,
+  id_parish: props.address.id_parish,
+  site: props.address.site,
+  principal_street: props.address.principal_street,
+  secondary_street: props.address.secondary_street,
+  reference: props.address.reference,
 });
 
-// Filtrado dinámico
 const filteredCantons = computed(() =>
   props.cantons.filter(c => c.id_province === form.id_province)
 );
@@ -46,7 +45,6 @@ const filteredParishes = computed(() =>
   props.parishes.filter(p => p.id_canton === form.id_canton)
 );
 
-// Reset dependencias
 watch(() => form.id_province, () => {
   form.id_canton = null;
   form.id_parish = null;
@@ -55,12 +53,11 @@ watch(() => form.id_canton, () => {
   form.id_parish = null;
 });
 
-// Enviar formulario
 const submit = () => {
-  router.post(route('addresses.store'), form, {
+  router.put(route('addresses.update', { address: form.id }), form, {
     preserveScroll: true,
     onSuccess: () => {
-      Swal.fire('Éxito', 'Dirección guardada correctamente.', 'success');
+      Swal.fire('Éxito', 'Dirección actualizada correctamente.', 'success');
       router.visit(route('users.index'));
     },
     onError: (errors) => {
@@ -75,7 +72,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Crear Dirección" />
+    <Head title="Editar Dirección" />
     <AppLayout :breadcrumbs="breadcrumbs">
   
       <div class="p-6">
@@ -87,12 +84,9 @@ const submit = () => {
   
             <div class="space-y-2">
               <Label class="text-sm font-medium text-gray-700 dark:text-gray-300">Paciente</Label>
-              <select v-model="form.id_user" class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded p-2">
-                <option :value="null" disabled>Seleccione un paciente</option>
-                <option v-for="user in props.users" :key="user.id" :value="user.id">
-                  {{ user.name }} {{ user.last_name }}
-                </option>
-              </select>
+                  <p class="text-white bg-gray-700 p-2 rounded">
+                    {{ props.user.name }} {{ props.user.last_name }}
+                  </p>
             </div>
   
             <div class="space-y-2">
@@ -149,11 +143,10 @@ const submit = () => {
   
           <div class="mt-6">
             <Button type="submit" class="bg-green-500 hover:bg-green-600 text-white">
-              Guardar Dirección
+              Actualizar Dirección
             </Button>
           </div>
         </form>
       </div>
     </AppLayout>
   </template>
-  

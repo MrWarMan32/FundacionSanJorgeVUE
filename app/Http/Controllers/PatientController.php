@@ -46,7 +46,7 @@ class PatientController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
         //
     }
@@ -67,7 +67,7 @@ class PatientController extends Controller
         //
     }
 
-    public function convertToAspirante(Request $request, User $user)
+    public function convertToAspirante(User $user)
     {
         if ($user->status === 'paciente') {
             $user->update(['status' => 'aspirante']);

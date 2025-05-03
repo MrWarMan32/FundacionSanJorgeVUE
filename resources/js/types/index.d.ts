@@ -26,7 +26,10 @@ export interface SharedData extends PageProps {
     sidebarOpen: boolean;
 }
 
+export type BreadcrumbItemType = BreadcrumbItem;
+
 export interface User {
+    
     id: number;
     name: string | null;
     last_name: string | null;
@@ -50,21 +53,57 @@ export interface User {
     representative_id_card: string | null;
     phone: string | null;
 
+    university_name: string | null;
+    degree_title: number | null;
+    graduation_year: string | null;
+    speciality: string | null;
+    certifications: string | null;
+
     status: string | null;
     user_type: string | null;
 
     id_address: string | null;
+    // address?: {
+    //     id: number;
+    //     site: string;
+    //     reference: string;
+    //   };
 
 }
 
-export type BreadcrumbItemType = BreadcrumbItem;
+export interface Therapy {
+    id: number;
+    name: string | null;
+    description: string | null;
+    duration: string | null;
+}
+
 
 export interface Address {
+    id: number;
+    id_user: number | null;
     id_province: number | null;
     id_canton: number | null;
     id_parish: number | null;
-    site: string | null;
-    principal_street: string | null;
-    secondary_street: string | null;
-    reference: string | null;
+    site: string ;
+    principal_street: string;
+    secondary_street: string;
+    reference: string;
+    user?: {
+        id: number;
+        name: string;
+        last_name: string;
+      };
+      province?: {
+        id: number;
+        name_province: string;
+      };
+      canton?: {
+        id: number;
+        name_canton: string;
+      };
+      parish?: {
+        id: number;
+        parroquia: string;
+      };
   }

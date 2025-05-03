@@ -1,12 +1,13 @@
 <script setup lang="ts">
     import AppLayout from '@/layouts/AppLayout.vue';
-    import {User, type BreadcrumbItem, type SharedData} from '@/types';
+    import {type BreadcrumbItem} from '@/types';
     import {computed, ref} from 'vue';
-    import {Head, usePage, Link, router} from '@inertiajs/vue3';
+    import {Head, router} from '@inertiajs/vue3';
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
     import {CircleX} from 'lucide-vue-next';
+    import Swal from 'sweetalert2';
 
 
     const breadcrumbs: BreadcrumbItem[] = [
@@ -132,10 +133,21 @@
     };
 
     const cancel = () => {
-        if (confirm('¿Estás seguro de que deseas cancelar?')) {
-            router.visit(route('users.index'));
-        }
-    }; 
+        Swal.fire({
+            title: '¿Cancelar?',
+            text: '¿Estás seguro de que deseas cancelar? Se perderán los cambios no guardados.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, cancelar',
+            cancelButtonText: 'No, volver',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.visit(route('users.index'));
+            }
+        });
+    };
 
 
     const submit = () => {
@@ -160,7 +172,14 @@
         router.post(route('users.store'), formData, {
             forceFormData: true,
             onSuccess: () => {
+                Swal.fire({
+                title: '¡Aspirante creado!',
+                text: 'El aspirante se guardó correctamente.',
+                icon: 'success',
+                confirmButtonText: 'Añadir dirección'
+            }).then(() => {
                 resetForm();
+            });
             },
             onError: (errors) => {
                 console.error('Error al crear el aspirante:', errors);
@@ -470,7 +489,7 @@
                         Siguiente
                     </Button>
                     <Button v-if="currentSection === 3" type="submit" class="bg-green-500 hover:bg-green-600 text-white">
-                        Guardar
+                        Guardar y Añadir direccion
                     </Button>
                 </div>
             </form>

@@ -2,36 +2,18 @@
     import AppLayout from '@/layouts/AppLayout.vue';
     import {User, type BreadcrumbItem, type SharedData} from '@/types';
     import {computed, onMounted, ref} from 'vue';
-    import {Head, usePage, Link, router, useForm} from '@inertiajs/vue3';
+    import {Head, usePage, Link, router} from '@inertiajs/vue3';
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
     import {CircleX} from 'lucide-vue-next';
     import Swal from 'sweetalert2';
 
-    
-    // const breadcrumbs: BreadcrumbItem[] = [
-    //     {title: 'Aspirantes', href: '/users'},
-    //     {title: 'Editar Aspirante', href: '#'},
-    // ];
 
-   const breadcrumbs = computed(() => {
-        let statusTitle;
-        let statusHref;
-
-        if (props.user.status === 'paciente') {
-            statusTitle = 'Paciente';
-            statusHref = '/patients';
-        } else {
-            statusTitle = 'Aspirante';
-            statusHref = '/users';
-        }
-
-        return [
-            { title: statusTitle, href: statusHref },
-            { title: `Editar ${statusTitle}`, href: '#' },
-        ];
-    });
+    const breadcrumbs: BreadcrumbItem[] = [
+        {title: 'Terapeustas', href: '/doctors'},
+        {title: 'Editar Terapeuta', href: '#'},
+    ];
 
     const props = defineProps<{
         user: {
@@ -43,34 +25,65 @@
             birth_date: string;
             age: number;
             ethnicity: string;
-            disable_card: boolean;
-            id_disable_card: string;
-            representative_name: string;
-            representative_last_name: string;
-            representative_id_card: string;
             phone: string;
-            disability_type: string[];
-            disability_level: string;
-            disability_grade: number;
-            cause_disability: string;
-            diagnosis: string;
             email: string;
+            university_name: string;
+            degree_title: string;
+            graduation_year: string;
+            speciality: string;
+            certifications: string;
             user_type: 'admin' | 'doctor' | 'usuario';
             status: 'aspirante' | 'paciente';
             // id_address?: Address | null;
         }
     }>();
 
-    const form = ref<Partial<typeof props.user>>({...props.user});
-
-
     onMounted(() => {
         form.value = {
-            ...props.user,
-            disability_type: Array.isArray(props.user.disability_type)
-                ? props.user.disability_type
-                : JSON.parse(props.user.disability_type || '[]'),
+            ...props.user, 
         }
+    });
+
+    const form = ref<Partial<typeof props.user>>({...props.user});
+
+    console.log('props.user:', props.user);
+
+    const form2 = ref<Partial<{
+        name: string;
+        last_name: string;
+        id_card: string;
+        gender: string;
+        birth_date: string;
+        email: string;
+        age: number;
+        ethnicity: string;
+        phone: string;
+        university_name: string;
+        degree_title: string;
+        graduation_year: string;
+        speciality: string;
+        certifications: string;
+        user_type: 'admin' | 'doctor' | 'usuario';
+        status: 'aspirante' | 'paciente';
+        //id_address: Address | null; 
+    }>>({
+        name: '',
+        last_name: '',
+        id_card: '',
+        gender: '',
+        birth_date: '',
+        age: undefined,
+        ethnicity: '',
+        phone: '',
+        email: '',
+        university_name: '',
+        degree_title: '',
+        graduation_year: '',
+        speciality: '',
+        certifications: '',
+        user_type: 'doctor',
+        status: undefined,
+        //id_address: null, // Inicializado como null
     });
 
    
@@ -81,19 +94,7 @@
         form.value.id_card = inputElement.value;
     };
 
-
-    const disabilityOptions = ref([
-        'Fisica',
-        'Intelectual',
-        'Visual',
-        'Auditiva',
-        'Psiquica',
-        'Visceral',
-        'Psicocognitiva',
-        'Psicosocial',
-        'Multiple',
-    ]);
-
+    
     const currentSection = ref(1);
 
     const nextSection = () => {
@@ -106,30 +107,24 @@
 
     const canProceed = computed(() => {
         if (currentSection.value === 1) {
-            return form.value.name && form.value.last_name && form.value.id_card && form.value.email && form.value.gender && form.value.birth_date && form.value.age && form.value.ethnicity;
+            return form.value.name && form.value.last_name && form.value.id_card && form.value.gender && form.value.birth_date && form.value.age && form.value.ethnicity;
         }
         if (currentSection.value === 2) {
-            return form.value.disability_type && form.value.disability_level && form.value.disability_grade && form.value.cause_disability && form.value.diagnosis;
+            return form.value.university_name && form.value.degree_title && form.value.graduation_year && form.value.speciality && form.value.certifications;
         }
-        if (currentSection.value === 3) {
-            return form.value.representative_name && form.value.representative_last_name && form.value.representative_id_card && form.value.phone;
-        }
+        // if (currentSection.value === 3) {
+        //     return form.value.representative_name && form.value.representative_last_name && form.value.representative_id_card && form.value.phone;
+        // }
         return true;
     });
 
-    
-    const toggleOption = (option: string) => {
-        // Si disability_type está indefinido, inicialízalo como arreglo vacío
-        if (!form.value.disability_type) {
-            form.value.disability_type = []
-        }
-
-        const index = form.value.disability_type.indexOf(option)
-        if (index > -1) {
-            form.value.disability_type.splice(index, 1)
-        } else {
-            form.value.disability_type.push(option)
-        }
+    const resetForm = () => {
+        Object.keys(form.value).forEach(key => {
+            form.value[key as keyof typeof form.value] = undefined;
+        });
+        form.value.user_type = 'doctor';
+        form.value.status = undefined;
+        //form.value.address = null; // Resetea también la dirección
     };
 
     const cancel = () => {
@@ -144,16 +139,10 @@
             cancelButtonText: 'No, continuar',
         }).then((result) => {
             if (result.isConfirmed) {
-                if (props.user.status === 'paciente') {
-                    router.visit(route('patients.index'));
-                } else {
-                    router.visit(route('users.index'));
-                }
+                router.visit(route('doctors.index'));
             }
         });
     };
-
-    const page = usePage();
 
 
     const submit = () => {
@@ -168,22 +157,19 @@
         }
 
         router.put(
-            route('users.update', props.user.id),
+            route('doctors.update', props.user.id),
             form.value,
             {
                 onSuccess: () => {
-                const mensajeExito = props.user.status === 'paciente'
-                    ? 'Paciente actualizado correctamente'
-                    : 'Aspirante actualizado correctamente';
                 Swal.fire({
                     title: 'Éxito',
-                    text: mensajeExito,
+                    text: 'Terapeuta actualizado correctamente',
                     icon: 'success',
                     confirmButtonText: 'Ok'
                 });
             },
                 onError: (errors) => {
-                    let errorMessage = 'No se pudo actualizar el usuario. Por favor, revise los siguientes errores:';
+                    let errorMessage = 'No se pudo actualizar el terapeuta. Por favor, revise los siguientes errores:';
                     if (errors && typeof errors === 'object') {
                         for (const key in errors) {
                             const errorValue = errors[key];
@@ -209,7 +195,7 @@
 </script>
 
 <template>
-    <Head title="Editar Aspirante" />
+    <Head title="Agregar Terapeuta" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-6 ">
 
@@ -220,7 +206,7 @@
             <form @submit.prevent="submit" class="max-w-3xl mx-auto space-y-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6" style="opacity: 0.8;">
 
                 <div class="text-sm text-gray-500 dark:text-gray-400">
-                    Paso {{ currentSection }} de 3 
+                    Paso {{ currentSection }} de 2
                 </div>
 
                 <div v-if="currentSection === 1" class="space-y-4">
@@ -276,6 +262,21 @@
                         </div>
 
                         <div class="space-y-2">
+                            <Label for="phone" class="text-sm font-medium text-gray-700 dark:text-gray-300">Contacto <span class="text-red-500">*</span></Label>
+                            <Input
+                                id="phone"
+                                type="text"
+                                v-model="form.phone"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                @input="validateNumberInput"
+                                required
+                                class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="Ingrese un numero celular"
+                            />
+                        </div>
+
+                        <div class="space-y-2">
                             <Label for="gender" class="text-sm font-medium text-gray-700 dark:text-gray-300">Género</Label>
                             <select
                                 id="gender"
@@ -298,6 +299,7 @@
                                 class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
                             />
                         </div>
+
                         <div class="space-y-2">
                             <Label for="age" class="text-sm font-medium text-gray-700 dark:text-gray-300">Edad</Label>
                             <Input
@@ -322,182 +324,75 @@
                 </div>
 
                 <div v-if="currentSection === 2" class="space-y-4">
-                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Datos de Discapacidad</h2>
+                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Formacion Academica</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
+   
                         <div class="space-y-2">
-                            <Label for="disable_card_select" class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                ¿Tiene Carnet de Discapacidad?
-                            </Label>
-                            <select
-                                id="disable_card_select"
-                                v-model="form.disable_card"
-                                class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500 w-full py-2 rounded-md"
-                            >
-                                <option :value="true" class="dark:bg-gray-700 dark:text-white">Sí</option>
-                                <option :value="false" class="dark:bg-gray-700 dark:text-white">No</option>
-
-                            </select>
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label for="id_disable_card" class="text-sm font-medium text-gray-700 dark:text-gray-300">Número de Carnet de Discapacidad</Label>
-                                <Input
-                                    id="id_disable_card"
-                                    type="number"
-                                    required
-                                    v-model="form.id_disable_card"
-                                    class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-                                    placeholder="Ingrese el número de carnet"
-                                    :disabled="!form.disable_card"
-                                />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label for="disability_level" class="text-sm font-medium text-gray-700 dark:text-gray-300">Nivel de Discapacidad</Label>
+                            <Label for="university_name" class="text-sm font-medium text-gray-700 dark:text-gray-300">Lugar de Formacion</Label>
                             <Input
-                                id="disability_level"
+                                id="university_name"
                                 type="text"
-                                v-model="form.disability_level"
+                                v-model="form.university_name"
                                 class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Ingrese el nivel de discapacidad"
+                                placeholder="Ingrese el lugar de formacion"
                             />
                         </div>
 
                         <div class="space-y-2">
-                            <Label for="disability_grade" class="text-sm font-medium text-gray-700 dark:text-gray-300">Grado de Discapacidad (%)</Label>
+                            <Label for="degree_title" class="text-sm font-medium text-gray-700 dark:text-gray-300">Titulo Obtenido</Label>
                             <Input
-                                id="disability_grade"
-                                type="number"
-                                v-model="form.disability_grade"
-                                class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Ingrese el grado de discapacidad"
-                            />
-                        </div>
-
-                        <div class="space-y-2">
-                            <Label for="cause_disability" class="text-sm font-medium text-gray-700 dark:text-gray-300">Causa de Discapacidad</Label>
-                            <Input
-                                id="cause_disability"
+                                id="degree_title"
                                 type="text"
-                                v-model="form.cause_disability"
+                                v-model="form.degree_title"
                                 class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Ingrese la causa de la discapacidad"
+                                placeholder="Ingrese el titulo obtenido"
                             />
                         </div>
 
                         <div class="space-y-2">
-                            <Label for="diagnosis" class="text-sm font-medium text-gray-700 dark:text-gray-300">Diagnóstico</Label>
+                            <Label for="graduation_year" class="text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de Graduacion</Label>
                             <Input
-                                id="diagnosis"
+                                id="graduation_year"
+                                type="date"
+                                v-model="form.graduation_year"
+                                class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+
+                        <div class="space-y-2">
+                            <Label for="speciality" class="text-sm font-medium text-gray-700 dark:text-gray-300">Especialidad</Label>
+                            <Input
+                                id="speciality"
                                 type="text"
-                                v-model="form.diagnosis"
+                                v-model="form.speciality"
                                 class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Ingrese el diagnóstico"
+                                placeholder="Ingrese su especialidad"
                             />
                         </div>
 
                         <div class="space-y-2">
-                            <label for="disability_type" class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Tipos de Discapacidad (seleccione uno o varios)
-                            </label>
-
-                            <!-- Select oculto para manejar selección -->
-                            <select
-                                id="disability_type"
-                                v-model="form.disability_type"
-                                multiple
-                                class="hidden"
-                            >
-                                <option
-                                    v-for="option in disabilityOptions"
-                                    :key="option"
-                                    :value="option"
-                                >
-                                    {{ option }}
-                                </option>
-                            </select>
-
-                            <!-- Contenedor visual w-[21.75rem]-->
-                            <div class="w-180 flex flex-wrap gap-2 p-2 border-gray-300 dark:border-gray-600 rounded-md">
-                                <template v-for="option in disabilityOptions" :key="option">
-                                    <button
-                                        type="button"
-                                        @click="toggleOption(option)"
-                                        :class="[
-                                            'inline-flex items-center rounded-full px-3 py-0.5 text-sm font-medium',
-                                            (form.disability_type ?? []).includes(option)
-                                                ? 'bg-indigo-600 text-white'
-                                                : 'bg-gray-200 text-gray-800 dark:bg-indigo-400 dark:text-gray-700'
-                                        ]"
-                                    >
-                                        {{ option }}
-                                    </button>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div v-if="currentSection === 3" class="space-y-4">
-                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Datos del Representante</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="space-y-2">
-                            <Label for="representative_name" class="text-sm font-medium text-gray-700 dark:text-gray-300">Nombre del Representante <span class="text-red-500">*</span></Label>
+                            <Label for="certifications" class="text-sm font-medium text-gray-700 dark:text-gray-300">Certificaciones</Label>
                             <Input
-                                id="representative_name"
+                                id="certifications"
                                 type="text"
-                                v-model="form.representative_name"
-                                required
+                                v-model="form.certifications"
                                 class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Ingrese el nombre del representante"
+                                placeholder="Ingrese sus certificaciones o cursos"
                             />
                         </div>
-                        <div class="space-y-2">
-                            <Label for="representative_last_name" class="text-sm font-medium text-gray-700 dark:text-gray-300">Apellido del Representante</Label>
-                            <Input
-                                id="representative_last_name"
-                                type="text"
-                                v-model="form.representative_last_name"
-                                class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Ingrese el apellido del representante"
-                            />
-                        </div>
-                        <div class="space-y-2">
-                            <Label for="representative_id_card" class="text-sm font-medium text-gray-700 dark:text-gray-300">Cédula del Representante <span class="text-red-500">*</span></Label>
-                            <Input
-                                id="representative_id_card"
-                                type="number"
-                                v-model="form.representative_id_card"
-                                inputmode="numeric"
-                                pattern="[0-9]*"
-                                @input="validateNumberInput"
-                                required
-                                class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Ingrese la cédula del representante"
-                            />
-                        </div>
-                        <div class="space-y-2">
-                            <Label for="phone" class="text-sm font-medium text-gray-700 dark:text-gray-300">Teléfono</Label>
-                            <Input
-                                id="phone"
-                                type="text"
-                                v-model="form.phone"
-                                class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Ingrese el teléfono"
-                            />
-                        </div>
+
+
                     </div>
                 </div>
 
                 <div class="mt-6" :class="{'flex justify-between': currentSection > 1, 'flex justify-end': currentSection === 1}">
-                    <Button v-if="currentSection > 1" type="button" @click="prevSection" class="bg-gray-300 hover:bg-gray-400 text-gray-800">
+                    <Button v-if="currentSection > 1" @click="prevSection" class="bg-gray-300 hover:bg-gray-400 text-gray-800">
                         Anterior
                     </Button>
-                    <Button v-if="currentSection < 3" type="button" :disabled="!canProceed" @click="nextSection" class="bg-indigo-500 hover:bg-indigo-600 text-white">
+                    <Button v-if="currentSection < 2" :disabled="!canProceed" @click="nextSection" class="bg-indigo-500 hover:bg-indigo-600 text-white">
                         Siguiente
                     </Button>
-                    <Button v-if="currentSection === 3" type="submit" class="bg-green-500 hover:bg-green-600 text-white">
+                    <Button v-if="currentSection === 2" type="submit" class="bg-green-500 hover:bg-green-600 text-white">
                         Guardar
                     </Button>
                 </div>

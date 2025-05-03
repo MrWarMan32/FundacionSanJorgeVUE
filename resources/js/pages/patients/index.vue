@@ -5,9 +5,14 @@ import {User, type BreadcrumbItem, type SharedData} from '@/types';
 import {Table, TableBody, TableCell, TableCaption, TableEmpty, TableFooter, TableHeader, TableRow, TableHead} from '@/components/ui/table';
 import {Button} from '@/components/ui/button';
 
-import {Pencil, Eye, UserX} from 'lucide-vue-next';
+import {Pencil, Eye, UserX, MapPinPlus} from 'lucide-vue-next';
 import {computed} from 'vue';
+import Swal from 'sweetalert2';
 
+const breadcrumbs: BreadcrumbItem[] = [
+    
+    {title: 'Pacientes', href: '/'}
+];
 
 interface UsersPageProps extends SharedData{
     users : User[];
@@ -16,60 +21,73 @@ interface UsersPageProps extends SharedData{
 const {props} = usePage<UsersPageProps>();
 
 // Filtrar solo pacientes
-const filteredUsers = computed(() => {
+const filteredUsers = computed(() => {  
     return props.users.filter(user => {
         return user.user_type === 'usuario' && user.status === 'paciente';
     });
 });
 
 const convertToAspirante = async (id: number) => {
-    if (confirm('¿Estás seguro de que deseas convertir a este paciente en aspirante?')) {
-        try {
-            await router.patch(
-                route('patients.convertToAspirante', id),
-                {}, // Datos (vacío, ya que solo estamos actualizando el estado)
-                { // Opciones
-                    preserveScroll: true,
-                    preserveState: true,
-                    onSuccess: () => {
-                        router.visit(route('patients.index')); // Recargar la lista para ver el cambio
-                        console.log('Paciente convertido a aspirante con éxito.');
-                    },
-                    onError: (errors) => {
-                        console.error('Error al convertir paciente:', errors);
-                        alert('Hubo un error al intentar convertir a aspirante.');
-                    },
-                }
-            );
-        } catch (error: any) {
-            console.error('Error inesperado:', error);
-            alert('Ocurrió un error inesperado.');
-        }
-    }
-};
-
-
-
-const breadcrumbs: BreadcrumbItem[] = [
-    
-    {title: 'Pacientes', href: '/patients'}
-];
-
-const deleteUser = async (id: number) => {
-    if (confirm('¿Estás seguro de que deseas eliminar este aspirante?')) {
-        router.delete(route('users.destroy', id), {
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: '¿Deseas convertir a este paciente en aspirante?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, convertir',
+    cancelButtonText: 'No, cancelar',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        await router.patch(
+          route('patients.convertToAspirante', id),
+          {},
+          {
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
-                router.visit(route('users.index'));
-                console.log('Aspirante eliminado con éxito.');
+              router.visit(route('patients.index'));
+              Swal.fire(
+                '¡Convertido!',
+                'El paciente ha sido convertido en aspirante.',
+                'success'
+              );
+              console.log('Paciente convertido a aspirante con éxito.');
             },
-            onError: () => {
-                console.error('Error al eliminar el aspirante.');
-            }
-        });
+            onError: (errors) => {
+              console.error('Error al convertir a aspirante:', errors);
+              let errorMessage = 'Hubo un error al intentar convertir a aspirante.';
+              if (errors && typeof errors === 'object') {
+                for (const key in errors) {
+                    const errorValue = errors[key];
+                            if (Array.isArray(errorValue)) {
+                                errorMessage += `<br><strong>${key}:</strong> ${errorValue.join(', ')}`;
+                            } else {
+                                errorMessage += `<br><strong>${key}:</strong> ${errorValue}`;
+                            }
+                }
+              }
+              Swal.fire({
+                title: 'Error',
+                html: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'Ok'
+              });
+            },
+          }
+        );
+      } catch (error: any) {
+        console.error('Error inesperado:', error);
+        Swal.fire(
+          '¡Error!',
+          'Ocurrió un error inesperado.',
+          'error'
+        );
+      }
     }
-};  
+  });
+};
 
 </script>
 
@@ -124,12 +142,20 @@ const deleteUser = async (id: number) => {
                                 </Button>
 
                                 <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
-                                    <Link :href="`/users/${user.id}/edit`"><Pencil /></Link>
+                                    <Link :href="route('users.edit', { user: user.id })">
+                                        <Pencil />
+                                    </Link>
+                                </Button>
+
+                                <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
+                                    <Link :href="route('addresses.edit', { id_user: user.id })">
+                                        <MapPinPlus />
+                                    </Link>
                                 </Button>
                                 
-                                <Button as-child size="sm" class="bg-yellow-500 text-white hover:bg-yellow-700">
+                                <!-- <Button as-child size="sm" class="bg-yellow-500 text-white hover:bg-yellow-700">
                                     <Link :href="`/users/${user.id}/show`"><Eye /></Link>
-                                </Button>
+                                </Button> -->
 
                             </TableCell>
                         </TableRow>

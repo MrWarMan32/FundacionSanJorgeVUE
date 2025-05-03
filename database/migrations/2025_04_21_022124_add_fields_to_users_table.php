@@ -43,6 +43,7 @@ return new class extends Migration
             // Rol y estado
             $table->enum('user_type', ['admin', 'doctor', 'usuario'])->default('usuario');
             $table->enum('status', ['aspirante', 'paciente'])->nullable()->default('aspirante');
+
         });
     }
 
