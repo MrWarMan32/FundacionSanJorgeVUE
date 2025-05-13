@@ -63,12 +63,6 @@ export interface User {
     user_type: string | null;
 
     id_address: string | null;
-    // address?: {
-    //     id: number;
-    //     site: string;
-    //     reference: string;
-    //   };
-
 }
 
 export interface Therapy {
@@ -77,6 +71,30 @@ export interface Therapy {
     description: string | null;
     duration: string | null;
 }
+
+export interface DoctorTherapy {
+    id: number;
+    id_doctor: number;
+    id_therapy: number;
+    doctor?: {
+        id: number;
+        name: string;
+        last_name: string;
+        id_card: string;
+        phone : string;
+        university_name: string;
+        degree_title: string;
+        graduation_year: string;
+        speciality: string;
+        certifications: string;
+      };
+      therapy?: {
+        id: number;
+        name: string;
+        description: string;
+        duration: string;
+      };
+  }
 
 
 export interface Address {
@@ -105,5 +123,67 @@ export interface Address {
       parish?: {
         id: number;
         parroquia: string;
+      };
+  }
+
+  export interface Appointment {
+    id: number;
+    id_doctor: number;
+    id_patient: number;
+    id_therapy: number;
+    day: string;
+    start_time: string;
+    end_time: string;
+    available: boolean | null;
+    doctor: {
+      id: number;
+      name: string;
+      last_name: string;
+    };
+    therapy: {
+      id: number;
+      name: string;
+    };
+  }
+
+  export interface Shifts {
+    id: number;
+    id_doctor: number;
+    id_patient: number;
+    id_therapy: number;
+    id_appointment: number;
+    is_recurring: boolean | null;
+    id_parent_shift: number | null;
+    date: string;
+    status: 'pendiente' | 'completado';
+    notes?: string;
+    doctor?: {
+        id: number;
+        name: string;
+        last_name: string;
+        id_card: string;
+        phone : string;
+        university_name: string;
+        degree_title: string;
+        graduation_year: string;
+        speciality: string;
+        certifications: string;
+      };
+      patient?: {
+        id: number;
+        name: string;
+        last_name: string;
+      };
+      therapy?: {
+        id: number;
+        name: string;
+        description: string;
+        duration: string;
+      };
+      appointment?: {
+        id: number;
+        day: string;
+        start_time: string;
+        end_time: string;
       };
   }

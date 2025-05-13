@@ -149,87 +149,89 @@ const deleteUser = async (id: number) => {
 <template>
     <Head title="Aspirantes" />
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="p-4">
-            <div class="flex">
-                <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
-                    <Link href="/users/create">
-                        <UserRoundPlus /> Agregar Aspirante
-                    </Link>
-                </Button>
+        
+            <div class="p-4">
+                <div class="flex">
+                    <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
+                        <Link href="/users/create">
+                            <UserRoundPlus /> Agregar Aspirante
+                        </Link>
+                    </Button>
+                </div>
             </div>
-        </div>
+            <div class="p-4">
+                <div class="rounded-xl border p-2">
+                    <Table>
+                    <TableCaption>Lista de Aspirantes</TableCaption>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead class="w-[200px] text-center">Nombres</TableHead>
+                                <TableHead class="w-[200px] text-center">Cedula</TableHead>
+                                <TableHead class="w-[200px] text-center">Tipo Discapacidad</TableHead>
+                                <TableHead class="w-[200px] text-center">Diagnostico</TableHead>
+                                <TableHead class="w-[200px] text-center">Contacto</TableHead>
+                                <TableHead class="w-[200px] text-center">Acciones</TableHead>
+                            </TableRow>
+                        </TableHeader>
 
-        <div class="ralative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min">
-            <Table>
-               <TableCaption>Lista de Aspirantes</TableCaption>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead class="w-[200px] text-center">Nombres</TableHead>
-                        <TableHead class="w-[200px] text-center">Cedula</TableHead>
-                        <TableHead class="w-[200px] text-center">Tipo Discapacidad</TableHead>
-                        <TableHead class="w-[200px] text-center">Diagnostico</TableHead>
-                        <TableHead class="w-[200px] text-center">Contacto</TableHead>
-                        <TableHead class="w-[200px] text-center">Acciones</TableHead>
-                    </TableRow>
-                </TableHeader>
+                        <TableBody>
+                            <template v-if="filteredUsers.length > 0">
+                                <TableRow v-for="user in filteredUsers" :key="user.id" class="text-center">
+                                    <TableCell>{{ user.name }}</TableCell>
+                                    <TableCell>{{ user.id_card }}</TableCell>
+                                    <TableCell>
+                                        <div class="flex flex-wrap justify-center gap-1">
+                                        <template v-if="user.disability_type">
+                                            <template v-for="(disability, index) in JSON.parse(user.disability_type)">
+                                            <div v-if="index % 2 === 0" class="flex justify-center w-full">
+                                                <span :key="index" class="bg-blue-100 text-indigo-600 text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-indigo-600 dark:text-gray-300 mr-1">
+                                                {{ disability }}
+                                                </span>
+                                                <span v-if="JSON.parse(user.disability_type)[index + 1]" :key="index + 1" class="bg-blue-100 text-indigo-600 text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-indigo-600 dark:text-gray-300 mr-1">
+                                                {{ JSON.parse(user.disability_type)[index + 1] }}
+                                                </span>
+                                            </div>
+                                            </template>
+                                        </template>
+                                        <template v-else>
+                                            <span class="bg-blue-100 text-indigo-600 text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-indigo-600 dark:text-gray-300 mr-1">No especificado</span>
+                                        </template>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>{{ user.diagnosis }}</TableCell>
+                                    <TableCell>{{ user.phone }}</TableCell>
 
-                <TableBody>
-                    <template v-if="filteredUsers.length > 0">
-                        <TableRow v-for="user in filteredUsers" :key="user.id" class="text-center">
-                            <TableCell>{{ user.name }}</TableCell>
-                            <TableCell>{{ user.id_card }}</TableCell>
-                            <TableCell>
-                                <div class="flex flex-wrap justify-center gap-1">
-                                <template v-if="user.disability_type">
-                                    <template v-for="(disability, index) in JSON.parse(user.disability_type)">
-                                    <div v-if="index % 2 === 0" class="flex justify-center w-full">
-                                        <span :key="index" class="bg-blue-100 text-indigo-600 text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-indigo-600 dark:text-gray-300 mr-1">
-                                        {{ disability }}
-                                        </span>
-                                        <span v-if="JSON.parse(user.disability_type)[index + 1]" :key="index + 1" class="bg-blue-100 text-indigo-600 text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-indigo-600 dark:text-gray-300 mr-1">
-                                        {{ JSON.parse(user.disability_type)[index + 1] }}
-                                        </span>
-                                    </div>
-                                    </template>
-                                </template>
-                                <template v-else>
-                                    <span class="bg-blue-100 text-indigo-600 text-xs font-semibold px-2.5 py-0.5 rounded-full dark:bg-indigo-600 dark:text-gray-300 mr-1">No especificado</span>
-                                </template>
-                                </div>
-                            </TableCell>
-                            <TableCell>{{ user.diagnosis }}</TableCell>
-                            <TableCell>{{ user.phone }}</TableCell>
+                                    <TableCell class="flex justify-center items-center h-full gap-2">
 
-                            <TableCell class="flex justify-center items-center h-full gap-2">
+                                        <Button size="sm" class="bg-green-500 text-white hover:bg-green-700" @click="convertToPaciente(user.id)">
+                                            <UserCheck />
+                                        </Button>
 
-                                <Button size="sm" class="bg-green-500 text-white hover:bg-green-700" @click="convertToPaciente(user.id)">
-                                    <UserCheck />
-                                </Button>
+                                        <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
+                                            <Link :href="route('users.edit', { user: user.id })">
+                                                <Pencil />
+                                            </Link>
+                                        </Button>
 
-                                <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
-                                    <Link :href="route('users.edit', { user: user.id })">
-                                        <Pencil />
-                                    </Link>
-                                </Button>
+                                        <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
+                                            <Link :href="route('addresses.edit', { id_user: user.id })">
+                                                <MapPinPlus />
+                                            </Link>
+                                        </Button>
 
-                                <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
-                                    <Link :href="route('addresses.edit', { id_user: user.id })">
-                                        <MapPinPlus />
-                                    </Link>
-                                </Button>
+                                        <Button size="sm" class="bg-red-500 text-white hover:bg-red-700" @click="deleteUser(user.id)">
+                                            <Trash /> 
+                                        </Button>
 
-                                <Button size="sm" class="bg-red-500 text-white hover:bg-red-700" @click="deleteUser(user.id)">
-                                    <Trash /> 
-                                </Button>
-
-                            </TableCell>
-                        </TableRow>
-                    </template>
-                    <template v-else>
-                        <TableEmpty> No hay aspirantes registrados. </TableEmpty>
-                    </template>
-                </TableBody>
-            </Table>
+                                    </TableCell>
+                                </TableRow>
+                            </template>
+                            <template v-else>
+                                <TableEmpty :colspan="6"> No hay aspirantes registrados. </TableEmpty>
+                            </template>
+                        </TableBody>
+                    </Table>
+                </div>
         </div>
     </AppLayout>
 </template>

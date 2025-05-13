@@ -1,12 +1,13 @@
 <script setup lang="ts">
     import AppLayout from '@/layouts/AppLayout.vue';
-    import {User, type BreadcrumbItem, type SharedData} from '@/types';
+    import {type BreadcrumbItem} from '@/types';
     import {computed, ref} from 'vue';
     import {Head, usePage, Link, router} from '@inertiajs/vue3';
     import { Button } from '@/components/ui/button';
     import { Input } from '@/components/ui/input';
     import { Label } from '@/components/ui/label';
     import {CircleX} from 'lucide-vue-next';
+    import Swal from 'sweetalert2';
 
 
     const breadcrumbs: BreadcrumbItem[] = [
@@ -56,8 +57,6 @@
     const validateNumberInput = (event: Event) => {
         const inputElement = event.target as HTMLInputElement;
         inputElement.value = inputElement.value.replace(/[^0-9]/g, '');
-        // Actualiza el valor del v-model manualmente
-        form.value.id_card = inputElement.value;
     };
 
     
@@ -91,32 +90,62 @@
     };
 
     const cancel = () => {
-        if (confirm('¿Estás seguro de que deseas cancelar?')) {
-            router.visit(route('doctors.index'));
-        }
-    }; 
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¿Deseas cancelar?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, cancelar',
+            cancelButtonText: 'No, continuar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+            router.visit(route('doctor_therapies.index'));
+            }
+        });
+    };
 
 
     const submit = () => {
         if (!canProceed.value) {
-            alert('Por favor completa todos los campos requeridos.');
+            Swal.fire({
+            title: 'Error',
+            text: 'Por favor, completa todos los campos requeridos.',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            });
             return;
         }
         form.value.user_type = 'doctor';
         router.post(route('doctors.store'), form.value, {
             onSuccess: () => {
-                resetForm();
-                router.visit(route('doctors.index'));
+            resetForm();
+            Swal.fire({
+                title: '¡Registro Exitoso!',
+                text: 'El terapeuta se ha guardado correctamente.',
+                icon: 'success',
+                confirmButtonText: 'Asignar Terapia',
+            }).then(() => {
+                // router.visit(route('doctor_therapies.create')); // Removed router.visit from here
+            });
             },
             onError: (errors) => {
-                let errorMessage = 'Hubo un error al intentar guardar el terapeuta.';
-                if (errors && typeof errors === 'object') {
-                    for (const key in errors) {
-                        const errorValue = errors[key];
-                        errorMessage += `<br><strong>${key}:</strong> ${Array.isArray(errorValue) ? errorValue.join(', ') : errorValue}`;
-                    }
+            let errorMessage = 'Hubo un error al intentar guardar el terapeuta.';
+            if (errors && typeof errors === 'object') {
+                for (const key in errors) {
+                const errorValue = errors[key];
+                errorMessage += `<br><strong>${key}:</strong> ${
+                    Array.isArray(errorValue) ? errorValue.join(', ') : errorValue
+                }`;
                 }
-                alert(errorMessage);
+            }
+            Swal.fire({
+                title: 'Error',
+                html: errorMessage, // Use html: instead of text:
+                icon: 'error',
+                confirmButtonText: 'OK',
+            });
             },
         });
     };

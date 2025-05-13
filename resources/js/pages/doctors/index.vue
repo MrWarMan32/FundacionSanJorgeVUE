@@ -85,59 +85,59 @@ const deleteUser = async (id: number) => {
 <template>
     <Head title="Terapeutas" />
     <AppLayout :breadcrumbs="breadcrumbs">
+        
         <div class="p-4">
-            <div class="flex">
-                <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
+            
+            <div class="flex margin-top-4 mb-4">
+                <Button as-child class="bg-indigo-500 text-white hover:bg-indigo-700">
                     <Link href="/doctors/create">
                         <UserRoundPlus /> Agregar Terapeuta
                     </Link>
                 </Button>
             </div>
-        </div>
 
-        <div class="ralative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min">
-            <Table>
-               <TableCaption>Lista de Terapeutas</TableCaption>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead class="w-[200px] text-center">Nombres</TableHead>
-                        <TableHead class="w-[200px] text-center">Cedula</TableHead>
-                        <TableHead class="w-[200px] text-center">Lugar de Formacion</TableHead>
-                        <TableHead class="w-[200px] text-center">Titulo obtenido</TableHead>
-                        <TableHead class="w-[200px] text-center">Terapia que imparte</TableHead>
-                        <TableHead class="w-[200px] text-center">Acciones</TableHead>
-                    </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                    <template v-if="filteredUsers.length > 0">
-                        <TableRow v-for="user in filteredUsers" :key="user.id" class="text-center">
-                            <TableCell>{{ user.name }}</TableCell>
-                            <TableCell>{{ user.id_card }}</TableCell>
-                            <TableCell>{{ user.university_name }}</TableCell>
-                            <TableCell>{{ user.degree_title }}</TableCell>
-                            <TableCell>{{ user.name }}</TableCell>
-
-                            <TableCell class="flex justify-center items-center h-full gap-2">
-
-                                <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
-                                    <Link :href="route('doctors.edit', { id: user.id })">
-                                        <Pencil />
-                                    </Link>
-                                </Button>
-
-                                <Button size="sm" class="bg-red-500 text-white hover:bg-red-700" @click="deleteUser(user.id)">
-                                    <Trash /> 
-                                </Button>
-
-                            </TableCell>
+            <div class="ralative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min">
+                <Table>
+                    <TableCaption>Lista de Terapeutas</TableCaption>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead class="w-[200px] text-center">Nombres</TableHead>
+                            <TableHead class="w-[200px] text-center">Cedula</TableHead>
+                            <TableHead class="w-[200px] text-center">Lugar de Formacion</TableHead>
+                            <TableHead class="w-[200px] text-center">Titulo obtenido</TableHead>
+                            <TableHead class="w-[200px] text-center">Acciones</TableHead>
                         </TableRow>
-                    </template>
-                    <template v-else>
-                        <TableEmpty> No hay terapeutas registrados. </TableEmpty>
-                    </template>
-                </TableBody>
-            </Table>
-        </div>
+                    </TableHeader>
+
+                    <TableBody>
+                        <template v-if="filteredUsers.length > 0">
+                            <TableRow v-for="user in filteredUsers" :key="user.id" class="text-center">
+                                <TableCell>{{ user.name }}</TableCell>
+                                <TableCell>{{ user.id_card }}</TableCell>
+                                <TableCell>{{ user.university_name }}</TableCell>
+                                <TableCell>{{ user.degree_title }}</TableCell>
+
+                                <TableCell class="flex justify-center items-center h-full gap-2">
+
+                                    <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
+                                        <Link :href="route('doctors.edit', { id: user.id })">
+                                            <Pencil />
+                                        </Link>
+                                    </Button>
+
+                                    <Button size="sm" class="bg-red-500 text-white hover:bg-red-700" @click="deleteUser(user.id)">
+                                        <Trash /> 
+                                    </Button>
+
+                                </TableCell>
+                            </TableRow>
+                        </template>
+                        <template v-else>
+                            <TableEmpty :colspan="5"> No hay terapeutas registrados. </TableEmpty>
+                        </template>
+                    </TableBody>
+                </Table>
+            </div>
+    </div>
     </AppLayout>
 </template>

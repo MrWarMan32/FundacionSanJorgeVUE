@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
 use App\Models\Shifts;
+use App\Models\Therapies;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,8 +16,11 @@ class ShiftsController extends Controller
      */
     public function index()
     {
+        $shifts = Shifts::with(['patient', 'doctor', 'therapy'])
+        ->get();
+
         return Inertia::render('shifts/index', [
-            'therapy' => Shifts::all(),
+            'shifts' => $shifts,
         ]);
     }
 
@@ -23,7 +29,14 @@ class ShiftsController extends Controller
      */
     public function create()
     {
-        //
+        $doctors = User::where('user_type', 'doctor')->get(['id', 'name', 'last_name']);
+        $therapies = Therapies::all(['id', 'name']);
+        $appointments = Appointment::all();
+
+        return Inertia::render('shifts/create', [
+            'doctors' => $doctors,
+            'therapies' => $therapies
+        ]);
     }
 
     /**

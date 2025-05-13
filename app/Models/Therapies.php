@@ -21,4 +21,5 @@ class Therapies extends Model
         'description',
         'duration',
     ];
+
 }

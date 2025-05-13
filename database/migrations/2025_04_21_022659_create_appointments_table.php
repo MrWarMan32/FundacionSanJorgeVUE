@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             //Relaciones
-            $table->unsignedBigInteger('id_patient');
+            $table->unsignedBigInteger('id_patient')->nullable();
             $table->unsignedBigInteger('id_doctor');
             $table->unsignedBigInteger('id_therapy');
 

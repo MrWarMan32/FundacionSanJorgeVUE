@@ -89,48 +89,50 @@ const deleteTherapy = async (id: number) => {
             </div>
         </div>
 
-        <div class="ralative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min">
-            <Table>
-               <TableCaption>Lista de Terapias</TableCaption>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead class="w-[200px] text-center">Nombre</TableHead>
-                        <TableHead class="w-[200px] text-center">Descripcion</TableHead>
-                        <TableHead class="w-[200px] text-center">Duracion</TableHead>
-                        <TableHead class="w-[200px] text-center">Acciones</TableHead>
-                    </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                    <template v-if="props.therapy.length > 0">
-                        <TableRow v-for="therapy in props.therapy" :key="therapy.id" class="text-center">
-                            <TableCell>{{ therapy.name }}</TableCell>
-                            <TableCell>{{ therapy.description }}</TableCell>
-                            <TableCell>{{ therapy.duration }}</TableCell>
-                            <TableCell class="flex justify-center items-center h-full gap-2">
-
-                                <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
-                                    <Link :href="route('therapies.edit', { therapy: therapy.id })">
-                                        <Pencil />
-                                    </Link>
-                                </Button>
-                                
-                                <!-- <Button as-child size="sm" class="bg-yellow-500 text-white hover:bg-yellow-700">
-                                    <Link :href="`/users/${user.id}/show`"><Eye /></Link>
-                                </Button> -->
-
-                                <Button size="sm" class="bg-red-500 text-white hover:bg-red-700" @click="deleteTherapy(therapy.id)">
-                                    <Trash /> 
-                                </Button>
-
-                            </TableCell>
+        <div class="p-4">
+            <div class="rounded-xl border p-2">
+                <Table>
+                <TableCaption>Lista de Terapias</TableCaption>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead class="w-[200px] text-center">Nombre</TableHead>
+                            <TableHead class="w-[200px] text-center">Descripcion</TableHead>
+                            <TableHead class="w-[200px] text-center">Duracion</TableHead>
+                            <TableHead class="w-[200px] text-center">Acciones</TableHead>
                         </TableRow>
-                    </template>
-                    <template v-else>
-                        <TableEmpty> No hay terapias registrados. </TableEmpty>
-                    </template>
-                </TableBody>
-            </Table>
+                    </TableHeader>
+
+                    <TableBody>
+                        <template v-if="props.therapy.length > 0">
+                            <TableRow v-for="therapy in props.therapy" :key="therapy.id" class="text-center">
+                                <TableCell>{{ therapy.name }}</TableCell>
+                                <TableCell>{{ therapy.description }}</TableCell>
+                                <TableCell>{{ therapy.duration }}</TableCell>
+                                <TableCell class="flex justify-center items-center h-full gap-2">
+
+                                    <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
+                                        <Link :href="route('therapies.edit', { therapy: therapy.id })">
+                                            <Pencil />
+                                        </Link>
+                                    </Button>
+                                    
+                                    <!-- <Button as-child size="sm" class="bg-yellow-500 text-white hover:bg-yellow-700">
+                                        <Link :href="`/users/${user.id}/show`"><Eye /></Link>
+                                    </Button> -->
+
+                                    <Button size="sm" class="bg-red-500 text-white hover:bg-red-700" @click="deleteTherapy(therapy.id)">
+                                        <Trash /> 
+                                    </Button>
+
+                                </TableCell>
+                            </TableRow>
+                        </template>
+                        <template v-else>
+                            <TableEmpty :colspan="6"> No hay terapias registrados. </TableEmpty>
+                        </template>
+                    </TableBody>
+                </Table>
+            </div>
         </div>
     </AppLayout>
 </template>

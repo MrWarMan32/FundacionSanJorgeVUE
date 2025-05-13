@@ -418,15 +418,6 @@
                             </div>
                         </div>
 
-                        <!-- <div v-if="form.disability_type && form.disability_type.length" class="mt-2">
-                            <span class="text-sm text-indigo-600 dark:text-gray-300">Seleccionado(s):</span>
-                            <div class="flex flex-wrap gap-2 mt-1">
-                                <span v-for="(item, index) in form.disability_type" :key="index" class="inline-flex items-center rounded-full bg-gray-200 dark:bg-indigo-600 px-3 py-0.5 text-sm font-medium text-gray-800 dark:text-gray-300">
-                                    {{ item }}
-                                </span>
-                            </div>
-                        </div> -->
-
                     </div>
                 </div>
 

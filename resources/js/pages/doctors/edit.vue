@@ -11,7 +11,7 @@
 
 
     const breadcrumbs: BreadcrumbItem[] = [
-        {title: 'Terapeustas', href: '/doctors'},
+        {title: 'Terapeutas', href: '/doctor_therapies'},
         {title: 'Editar Terapeuta', href: '#'},
     ];
 
@@ -139,7 +139,7 @@
             cancelButtonText: 'No, continuar',
         }).then((result) => {
             if (result.isConfirmed) {
-                router.visit(route('doctors.index'));
+                router.visit(route('doctor_therapies.index'));
             }
         });
     };

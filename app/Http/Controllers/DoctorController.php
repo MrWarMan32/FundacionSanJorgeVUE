@@ -51,9 +51,9 @@ class DoctorController extends Controller
             'user_type' => 'required|in:doctor',
         ]);
     
-        User::create($validated);
+        $doctor = User::create($validated);
     
-        return redirect()->route('doctors.index')->with('success', 'Doctor creado exitosamente.');
+        return redirect()->route('doctor_therapies.create', ['selectedDoctorId' => $doctor->id])->with('success', 'Doctor creado exitosamente.');
     }
 
     /**
@@ -98,7 +98,7 @@ class DoctorController extends Controller
 
         $user->update($validatedData);
 
-        return Redirect::route('doctors.index')->with('success', 'Terapeuta actualizado con éxito.');
+        return Redirect::route('doctor_therapies.index')->with('success', 'Terapeuta actualizado con éxito.');
 
     }
 

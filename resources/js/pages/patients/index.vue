@@ -94,8 +94,8 @@ const convertToAspirante = async (id: number) => {
 <template>
     <Head title="Aspirantes" />
     <AppLayout :breadcrumbs="breadcrumbs">
-       
-        <div class="ralative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min">
+       <div class="p-4">
+        <div class="rounded-xl border p-2">
             <Table>
                <TableCaption>Lista de Pacientes</TableCaption>
                 <TableHeader>
@@ -161,10 +161,11 @@ const convertToAspirante = async (id: number) => {
                         </TableRow>
                     </template>
                     <template v-else>
-                        <TableEmpty> No hay pacientes registrados. </TableEmpty>
+                        <TableEmpty :colspan="6"> No hay pacientes registrados. </TableEmpty>
                     </template>
                 </TableBody>
             </Table>
         </div>
+      </div>
     </AppLayout>
 </template>

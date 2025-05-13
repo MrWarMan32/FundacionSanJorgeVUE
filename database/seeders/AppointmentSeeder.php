@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Therapies;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Carbon\Carbon;
@@ -16,9 +17,9 @@ class AppointmentSeeder extends Seeder
     {
         // Obtener algunos IDs de pacientes, doctores y terapias existentes
         $doctors = User::where('user_type', 'doctor')->pluck('id')->toArray();
-        $therapies = Therapy::pluck('id')->toArray();
+        $therapies = Therapies::pluck('id')->toArray();
 
-        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        $daysOfWeek = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'];
         $startTime = Carbon::parse('08:00');
         $endTime = Carbon::parse('12:00');
         $intervalMinutes = 20;

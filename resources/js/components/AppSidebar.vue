@@ -5,7 +5,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import {Folder, LayoutGrid,  Users, User, BookHeart, BriefcaseMedical, MapPin} from 'lucide-vue-next';
+import {Folder, LayoutGrid,  Users, User, BookHeart, BriefcaseMedical, MapPin, CalendarDays, Calendar1} from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -26,13 +26,18 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Terapeutas',
-        href: '/doctors',
+        href: '/doctor_therapies',
         icon:  BriefcaseMedical,
     },
     {
         title: 'Terapias',
         href: '/therapies',
         icon:  BookHeart,
+    },
+    {
+        title: 'Carga Horaria',
+        href: '/appointments',
+        icon:  Calendar1,
     },
     {
         title: 'Direcciones',
@@ -42,7 +47,7 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Agendar Citas',
         href: '/shifts',
-        icon:  MapPin,
+        icon:  CalendarDays,
     },
 ];
 

@@ -11,7 +11,7 @@
 
 
     const breadcrumbs: BreadcrumbItem[] = [
-        {title: 'Terapias', href: '/theapies'},
+        {title: 'Terapias', href: '/therapies'},
         {title: 'Agregar Terapia', href: '#'},
     ];
 

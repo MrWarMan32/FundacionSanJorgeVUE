@@ -91,7 +91,6 @@ class AddressController extends Controller
             'provinces' => Province::all(),
             'cantons' => Canton::all(),
             'parishes' => Parish::all(),
-            //'user' => $user,
             'user' => $address->user,
             'users' => User::where('user_type', 'usuario')->get(),
         ]);
