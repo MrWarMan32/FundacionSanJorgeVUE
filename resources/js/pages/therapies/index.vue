@@ -5,8 +5,7 @@ import {Therapy, type BreadcrumbItem, type SharedData} from '@/types';
 import {Table, TableBody, TableCell, TableCaption, TableEmpty, TableFooter, TableHeader, TableRow, TableHead} from '@/components/ui/table';
 import {Button} from '@/components/ui/button';
 
-import {Pencil, Trash, UserRoundPlus, Eye, UserCheck} from 'lucide-vue-next';
-import {computed} from 'vue';
+import {Pencil, Trash2, UserRoundPlus} from 'lucide-vue-next';
 import Swal from 'sweetalert2';
 
 
@@ -117,7 +116,7 @@ const deleteTherapy = async (id: number) => {
                                     </Button>
                                     
                                     <Button size="sm" class="bg-red-500 text-black hover:bg-red-700" @click="deleteTherapy(therapy.id)">
-                                        <Trash /> 
+                                        <Trash2 /> 
                                     </Button>
 
                                 </TableCell>

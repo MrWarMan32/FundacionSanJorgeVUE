@@ -40,7 +40,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|min:3|max:255',
+            'name' => 'required|string|min:2|max:255',
             'last_name' => 'required|string|min:3|max:255',
             'id_card' => 'required|integer|digits_between:8,10|unique:users',
             'gender' => 'required|string|in:masculino,femenino,otro',
@@ -135,7 +135,7 @@ class UserController extends Controller
     {
 
         $validatedData = $request->validate([
-            'name' => ['required', 'string', 'min:3', 'max:255'],
+            'name' => ['required', 'string', 'min:2', 'max:255'],
             'last_name' => ['nullable', 'string', 'max:255'],
             'id_card' => ['required', 'integer', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],

@@ -166,26 +166,16 @@ const deleteDoctorTherapy = (doctorId: number) => {
 
                 <TableCell class="flex justify-center gap-2">
 
-                  <Button
-                    as-child
-                    size="sm"
-                    class="bg-green-500 text-black hover:bg-green-700"
-                  >
-                    <Link
-                      :href="route('doctor_therapies.create', { selectedDoctorId: doctor.id })"
-                    >
+                  <Button as-child size="sm" class="bg-green-500 text-black hover:bg-green-700">
+                    <Link :href="route('doctor_therapies.create', { selectedDoctorId: doctor.id })">
                       Asignar terapia
                     </Link>
                   </Button>
 
-                  <Button
-                    as-child
-                    size="sm"
-                    class="bg-red-500 text-black hover:bg-red-700"
-                    @click="deleteDoctorTherapy(doctor.id)"
-                  >
+                  <Button size="sm" class="bg-red-500 text-black hover:bg-red-700" @click="deleteDoctorTherapy(doctor.id)" title="Eliminar">
                     <Trash2 />
                   </Button>
+                  
                 </TableCell>
               </TableRow>
             </template>

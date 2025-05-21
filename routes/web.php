@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\Doctor_TherapiesController;
@@ -19,19 +20,8 @@ Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
 
-Route::get('dashboard', function () {
-    return Inertia::render('Dashboard', [
-        'stats' => [
-            'total_patients' => User::where('status', 'paciente')->where('user_type', 'usuario')->count(),
-            'male_patients' => User::where('gender', 'masculino')->where('user_type', 'usuario')->where('status', 'paciente')->count(),
-            'female_patients' => User::where('gender', 'femenino')->where('user_type', 'usuario')->where('status', 'paciente')->count(),
-
-            'total_users' => User::where('status', 'aspirante')->where('user_type', 'usuario')->count(),
-            'male_users' => User::where('gender', 'masculino')->where('user_type', 'usuario')->where('status', 'aspirante')->count(),
-            'female_users' => User::where('gender', 'femenino')->where('user_type', 'usuario')->where('status', 'aspirante')->count(),
-        ]
-    ]);
-})->middleware(['auth'])->name('dashboard');
+Route::get('dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
     

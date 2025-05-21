@@ -5,7 +5,7 @@ import {User, type BreadcrumbItem, type SharedData} from '@/types';
 import {Table, TableBody, TableCell, TableCaption, TableEmpty, TableFooter, TableHeader, TableRow, TableHead} from '@/components/ui/table';
 import {Button} from '@/components/ui/button';
 
-import {Pencil, Trash, UserRoundPlus, Eye, UserCheck} from 'lucide-vue-next';
+import {Pencil, Trash2, UserRoundPlus} from 'lucide-vue-next';
 import {computed} from 'vue';
 import Swal from 'sweetalert2';
 
@@ -126,7 +126,7 @@ const deleteUser = async (id: number) => {
                                     </Button>
 
                                     <Button size="sm" class="bg-red-500 text-white hover:bg-red-700" @click="deleteUser(user.id)">
-                                        <Trash /> 
+                                        <Trash2 /> 
                                     </Button>
 
                                 </TableCell>
