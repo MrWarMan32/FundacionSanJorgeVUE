@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { CircleX } from 'lucide-vue-next';
 import Swal from 'sweetalert2';
 import { useForm } from '@inertiajs/vue3';
 import type { Appointment, User, Therapy } from '@/types';

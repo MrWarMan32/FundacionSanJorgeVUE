@@ -24,17 +24,17 @@ class Address extends Model
 
     public function province()
     {
-        return $this->belongsTo(Province::class, 'id_province');
+        return $this->belongsTo(Province::class, 'id_province', 'id');
     }
 
     public function canton()
     {
-        return $this->belongsTo(Canton::class, 'id_canton');
+        return $this->belongsTo(Canton::class, 'id_canton', 'id');
     }
 
     public function parish()
     {
-        return $this->belongsTo(Parish::class, 'id_parish');
+        return $this->belongsTo(Parish::class, 'id_parish', 'id');
     }
 
 }

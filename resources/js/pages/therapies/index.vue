@@ -77,7 +77,7 @@ const deleteTherapy = async (id: number) => {
 </script>
 
 <template>
-    <Head title="Aspirantes" />
+    <Head title="Terapias" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="p-4">
             <div class="flex">
@@ -110,17 +110,13 @@ const deleteTherapy = async (id: number) => {
                                 <TableCell>{{ therapy.duration }}</TableCell>
                                 <TableCell class="flex justify-center items-center h-full gap-2">
 
-                                    <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
+                                    <Button as-child size="sm" class="bg-indigo-500 text-black hover:bg-indigo-700">
                                         <Link :href="route('therapies.edit', { therapy: therapy.id })">
                                             <Pencil />
                                         </Link>
                                     </Button>
                                     
-                                    <!-- <Button as-child size="sm" class="bg-yellow-500 text-white hover:bg-yellow-700">
-                                        <Link :href="`/users/${user.id}/show`"><Eye /></Link>
-                                    </Button> -->
-
-                                    <Button size="sm" class="bg-red-500 text-white hover:bg-red-700" @click="deleteTherapy(therapy.id)">
+                                    <Button size="sm" class="bg-red-500 text-black hover:bg-red-700" @click="deleteTherapy(therapy.id)">
                                         <Trash /> 
                                     </Button>
 

@@ -22,4 +22,9 @@ class Therapies extends Model
         'duration',
     ];
 
+    public function doctors()
+    {
+        return $this->belongsToMany(User::class, 'doctor_therapies', 'id_therapy', 'id_doctor');
+    }
+
 }

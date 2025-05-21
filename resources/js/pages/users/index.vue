@@ -5,7 +5,7 @@ import {User, type BreadcrumbItem, type SharedData} from '@/types';
 import {Table, TableBody, TableCell, TableCaption, TableEmpty, TableFooter, TableHeader, TableRow, TableHead} from '@/components/ui/table';
 import {Button} from '@/components/ui/button';
 
-import {Pencil, Trash, UserRoundPlus, UserCheck, MapPinPlus} from 'lucide-vue-next';
+import {Pencil, Trash, UserRoundPlus, UserCheck, MapPinPlus, FileOutput} from 'lucide-vue-next';
 import {computed} from 'vue';
 import Swal from 'sweetalert2';
 
@@ -151,11 +151,18 @@ const deleteUser = async (id: number) => {
     <AppLayout :breadcrumbs="breadcrumbs">
         
             <div class="p-4">
-                <div class="flex">
-                    <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
+
+                <div class="flex mb-4 gap-2">
+                    <Button as-child class="bg-indigo-500 text-white hover:bg-indigo-700">
                         <Link href="/users/create">
                             <UserRoundPlus /> Agregar Aspirante
                         </Link>
+                    </Button>
+
+                    <Button as-child class="bg-indigo-500 text-white hover:bg-indigo-700">
+                        <a :href="route('users.export')" target="_blank">
+                            <FileOutput /> Exportar Aspirantes
+                        </a>
                     </Button>
                 </div>
             </div>
@@ -177,7 +184,7 @@ const deleteUser = async (id: number) => {
                         <TableBody>
                             <template v-if="filteredUsers.length > 0">
                                 <TableRow v-for="user in filteredUsers" :key="user.id" class="text-center">
-                                    <TableCell>{{ user.name }}</TableCell>
+                                    <TableCell>{{ user.name }} {{ user.last_name }}</TableCell>
                                     <TableCell>{{ user.id_card }}</TableCell>
                                     <TableCell>
                                         <div class="flex flex-wrap justify-center gap-1">
@@ -203,23 +210,30 @@ const deleteUser = async (id: number) => {
 
                                     <TableCell class="flex justify-center items-center h-full gap-2">
 
-                                        <Button size="sm" class="bg-green-500 text-white hover:bg-green-700" @click="convertToPaciente(user.id)">
+                                        <Button size="sm" class="bg-green-500 text-black hover:bg-green-700" @click="convertToPaciente(user.id)">
                                             <UserCheck />
                                         </Button>
 
-                                        <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
+                                        <Button as-child size="sm" class="bg-indigo-500 text-black hover:bg-indigo-700">
                                             <Link :href="route('users.edit', { user: user.id })">
                                                 <Pencil />
                                             </Link>
                                         </Button>
 
-                                        <Button as-child size="sm" class="bg-indigo-500 text-white hover:bg-indigo-700">
+                                        <Button as-child size="sm" class="bg-indigo-500 text-black hover:bg-indigo-700">
                                             <Link :href="route('addresses.edit', { id_user: user.id })">
                                                 <MapPinPlus />
                                             </Link>
                                         </Button>
 
-                                        <Button size="sm" class="bg-red-500 text-white hover:bg-red-700" @click="deleteUser(user.id)">
+                                        <Button as-child size="sm" class="bg-green-500 text-black hover:bg-green-700" title="Exportar a Excel">
+                                            <a :href="route('users.export', user.id)" target="_blank">
+                                                <FileOutput />
+                                            </a>
+                                        </Button>
+                                        
+
+                                        <Button size="sm" class="bg-red-500 text-black hover:bg-red-700" @click="deleteUser(user.id)">
                                             <Trash /> 
                                         </Button>
 

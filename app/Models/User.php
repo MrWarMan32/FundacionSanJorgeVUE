@@ -84,9 +84,13 @@ class User extends Authenticatable
         ];
     }
 
+    // public function address()
+    // {
+    //     return $this->hasOne(Address::class, 'id_user');
+    // }
     public function address()
     {
-        return $this->hasOne(Address::class, 'id_user');
+        return $this->belongsTo(Address::class, 'id_address', 'id');
     }
 
     protected static function booted()
@@ -95,4 +99,10 @@ class User extends Authenticatable
             $user->address()->delete();
         });
     }
+
+    public function therapies()
+    {
+        return $this->belongsToMany(Therapies::class, 'doctor_therapies', 'id_doctor', 'id_therapy');
+    }
+
 }

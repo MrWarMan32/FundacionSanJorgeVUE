@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Shifts;
+use App\Models\Therapies;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\PatientExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -182,5 +187,32 @@ class UserController extends Controller
         }
 
         return Redirect::route('users.index')->with('error', 'El usuario no es un aspirante.');
+    }
+
+    public function generateGeneral($id)
+    {
+        // 1. Buscar el paciente
+        $patient = User::findOrFail($id);
+
+        // 2. Buscar las citas (shifts) del paciente con relaciones cargadas
+        $shifts = Shifts::with(['therapy', 'doctor', 'appointment'])
+            ->where('id_patient', $patient->id)
+            ->get();
+
+        // 3. Pasar los datos a la vista del certificado
+        $pdf = Pdf::loadView('pdf.generalcertificate', [
+            'patient' => $patient,
+            'shifts' => $shifts,
+        ]);
+
+        return $pdf->stream("certificado_general_'{$patient->id}.pdf");
+    }
+
+    public function export($id)
+    {
+        $user = User::findOrFail($id);
+        $filename = $user->name. ' '. $user->last_name.'.xlsx';
+
+        return Excel::download(new PatientExport($id), $filename);
     }
 }

@@ -24,6 +24,30 @@ class Shifts extends Model
         'is_recurring',
         'id_parent_shift',
         'date',
-        'notes',    
+        'notes',  
     ];
+
+    protected $casts = [
+        'is_recurring' => 'boolean',
+    ];
+
+    public function patient()
+    {
+        return $this->belongsTo(User::class, 'id_patient');
+    }
+
+    public function doctor()
+    {
+        return $this->belongsTo(User::class, 'id_doctor');
+    }
+
+    public function therapy()
+    {
+        return $this->belongsTo(Therapies::class, 'id_therapy');
+    }
+
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class, 'id_appointment');
+    }
 }

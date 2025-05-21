@@ -1,62 +1,28 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head, router } from '@inertiajs/vue3';
+import { Head} from '@inertiajs/vue3';
 import { Shifts } from '@/types';
 import { Table, TableBody, TableCell, TableCaption, TableEmpty, TableFooter, TableHeader, TableRow, TableHead } from '@/components/ui/table';
+import {FilePlus2} from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
-import {Pencil, Trash, CalendarHeart, CalendarSync, FilePlus2} from 'lucide-vue-next';
-import Swal from 'sweetalert2';
-import { Link } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
+import { router } from '@inertiajs/vue3'
 
 const breadcrumbs = [
-   { title: 'Agendar Cita', href: '#' }
+   { title: 'Registro de Citas', href: '#' }
 ];
 
 const props = defineProps<{
   shifts: Shifts[];
 }>();
 
-
-const selectedStatus = ref<'todos' | 'pendiente' | 'completado'>('todos');
-
 // Filtrar citas completadas
 const filteredShifts = computed(() => {  
     return props.shifts.filter(shift => {
-        return shift.status === 'pendiente';
+        return shift.status === 'completada';
     });
 });
 
-const deleteShifts = (shiftId: number) => {
-    Swal.fire({
-    title: '¿Eliminar cita?',
-    text: 'Esta acción no se puede deshacer.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar',
-  }).then((result) => {
-    if (result.isConfirmed) {
-      router.delete(route('shifts.destroy', shiftId), {
-        onSuccess: () => {
-          Swal.fire({
-            title: 'Eliminado',
-            text: 'La cita ha sido eliminado exitosamente.',
-            icon: 'success',
-            confirmButtonText: 'OK',
-          }).then(() => {
-            router.visit(route('shifts.index'));
-          });
-        },
-        onError: () => {
-          Swal.fire('Error', 'No se pudo eliminar la cita.', 'error');
-        },
-      });
-    }
-  });
-};
 
 const formatShiftDisplay = (
   dateStr: string,
@@ -84,50 +50,15 @@ const formatShiftDisplay = (
 // Capitaliza la primera letra
 const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 
-
-const generateWeekly = async () => {
-  const confirm = await Swal.fire({
-    title: '¿Generar citas?',
-    text: '¿Deseas generar las citas para la siguiente semana?',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: 'Sí, generar',
-    cancelButtonText: 'Cancelar',
-  });
-
-  if (confirm.isConfirmed) {
-    router.post(route('shifts.generateWeekly'), {}, {
-      onSuccess: () => {
-        Swal.fire('Éxito', 'Las citas fueron generadas correctamente.', 'success');
-      },
-      onError: () => {
-        Swal.fire('Error', 'Hubo un error al generar las citas.', 'error');
-      }
-    });
-  }
-};
-
-
-
 </script>
 
+
 <template>
-    <Head title="Citas" />
+    <Head title="Registro de Citas" />
     <AppLayout :breadcrumbs="breadcrumbs">
 
         <div class="p-4">
-            <div class="flex mb-4 gap-2">
-                <Button as-child class="bg-indigo-500 text-white hover:bg-indigo-700">
-                <Link href="/shifts/create">
-                    <CalendarHeart /> Agendar cita
-                </Link>
-                </Button>
-
-                <Button class="bg-indigo-500 text-white hover:bg-indigo-700"  @click="generateWeekly">
-                  <CalendarSync /> Generar Citas
-                </Button>
-            </div>
-
+            
             <div class="rounded-xl border p-2">
                 <Table>
                     <TableCaption>Lista de citas</TableCaption>
@@ -144,9 +75,8 @@ const generateWeekly = async () => {
 
                     <TableBody>
                         <TableRow
-                            v-for="shift in filteredShifts"
-                            :key="shift.id"
-                            class="text-center"
+                        v-for="shift in filteredShifts"
+                        class="text-center"
                         >
                             <TableCell>{{ shift.patient?.name }} {{ shift.patient?.last_name }}</TableCell>
                             <TableCell>{{ shift.therapy?.name }}</TableCell>
@@ -162,28 +92,15 @@ const generateWeekly = async () => {
                                 {{ shift.status }}
                             </span>
                             </TableCell>
-
-                            <TableCell class="flex justify-center gap-2">
-
-                                <Button as-child size="sm" class="bg-indigo-500 text-black hover:bg-indigo-700">
-                                    <Link :href="route('shifts.edit', shift.id)">
-                                    <Pencil />
-                                    </Link>
-                                </Button>
-
-                                <Button as-child size="sm" class="bg-green-500 text-black hover:bg-green-700">
+                            <TableCell>
+                                <Button as-child size="sm" class="bg-orange-500 text-black hover:bg-orange-700" title="Generar certificado">
                                     <a :href="route('shifts.certificate', shift.id)" target="_blank">
                                     <FilePlus2 />
                                     </a>
                                 </Button>
-                                
-                                <Button size="sm" class="bg-red-500 text-black hover:bg-red-700" @click="deleteShifts(shift.id)">
-                                    <Trash />
-                                </Button>
-
                             </TableCell>
                         </TableRow>
-                        
+
                         <template>
                             <TableEmpty :colspan="7" >No hay citas registradas.</TableEmpty>
                         </template>

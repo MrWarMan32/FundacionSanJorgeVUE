@@ -7,13 +7,20 @@ import { type BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { CircleX } from 'lucide-vue-next';
 import Swal from 'sweetalert2';
 import { PageProps } from '@inertiajs/core';
 
-const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Aspirantes', href: '/users' },
-  { title: 'Editar Dirección', href: '#' },
-];
+const breadcrumbs = computed<BreadcrumbItem[]>(() => {
+    const userStatus = props.user.status;
+    return [
+        {
+            title: userStatus === 'paciente' ? 'Pacientes' : 'Aspirantes',
+            href: userStatus === 'paciente' ? route('patients.index') : route('users.index')
+        },
+        { title: 'Editar Dirección', href: '#' },
+    ];
+});
 
 interface EditPageProps extends PageProps {
   address: Address;
@@ -53,12 +60,38 @@ watch(() => form.id_canton, () => {
   form.id_parish = null;
 });
 
+const cancel = () => {
+    Swal.fire({
+        title: '¿Cancelar?',
+        text: '¿Estás seguro de que deseas cancelar? Se perderán los cambios no guardados.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'No, volver',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (props.user.status === 'paciente') {
+                router.visit(route('patients.index'));
+            } else {
+                router.visit(route('users.index'));
+            }
+        }
+    });
+};
+
 const submit = () => {
   router.put(route('addresses.update', { address: form.id }), form, {
     preserveScroll: true,
     onSuccess: () => {
       Swal.fire('Éxito', 'Dirección actualizada correctamente.', 'success');
-      router.visit(route('users.index'));
+        // Redirigir según el estado del usuario después de una actualización exitosa
+        if (props.user.status === 'paciente') {
+            router.visit(route('patients.index')); // Si es paciente, va a patient.index
+        } else {
+            router.visit(route('users.index')); // Si no, va a users.index
+        }
     },
     onError: (errors) => {
       let msg = 'Errores encontrados:<br>';
@@ -76,6 +109,10 @@ const submit = () => {
     <AppLayout :breadcrumbs="breadcrumbs">
   
       <div class="p-6">
+
+        <Button size="sm" class="bg-red-500 text-white hover:bg-red-700 absolute top-27 right-70 z-10" @click="cancel">
+          <CircleX />Cancelar
+        </Button>
   
         <form @submit.prevent="submit" class="max-w-3xl mx-auto space-y-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6" style="opacity: 0.95;">
           <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Datos Domiciliarios</h2>

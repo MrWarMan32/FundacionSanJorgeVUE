@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use App\Exports\PatientExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PatientController extends Controller
 {
@@ -75,5 +77,13 @@ class PatientController extends Controller
         }
 
         return Redirect::route('patients.index')->with('error', 'El usuario no es un aspirante.');
+    }
+
+    public function export($id)
+    {
+        $patient = User::findOrFail($id);
+        $filename = $patient->name. ' '. $patient->last_name.'.xlsx';
+
+        return Excel::download(new PatientExport($id), $filename);
     }
 }

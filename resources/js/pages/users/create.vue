@@ -224,6 +224,7 @@
                                 id="last_name"
                                 type="text"
                                 v-model="form.last_name"
+                                required
                                 class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
                                 placeholder="Ingrese el apellido"
                             />
@@ -276,6 +277,7 @@
                                 id="birth_date"
                                 type="date"
                                 v-model="form.birth_date"
+                                required
                                 class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
                             />
                         </div>
@@ -285,6 +287,7 @@
                                 id="age"
                                 type="number"
                                 v-model="form.age"
+                                required
                                 class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
                                 placeholder="Ingrese la edad"
                             />
@@ -295,6 +298,7 @@
                                 id="ethnicity"
                                 type="text"
                                 v-model="form.ethnicity"
+                                required
                                 class="border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
                                 placeholder="Ingrese la etnia"
                             />

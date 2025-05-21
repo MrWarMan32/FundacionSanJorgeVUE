@@ -18,9 +18,10 @@ class AppointmentsController extends Controller
     {
 
         return Inertia::render('appointments/index', [
-            'appointments' => Appointment::with(['doctor', 'therapy'])->get(),
+            'appointments' => Appointment::with(['doctor', 'therapy','patient'])->get(),
             'doctor' => User::where('user_type', 'doctor')->select('id', 'name', 'last_name')->get(),
             'therapies' => Therapies::select('id', 'name')->get(),
+            'patient' => User::where('status', 'paciente')->get(),
         ]);
     }
 
@@ -43,7 +44,7 @@ class AppointmentsController extends Controller
             'therapy' => $therapy,
             'doctors' => $doctors,
             'therapies' => $therapies,
-            'weekdays' => ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes'],
+            'weekdays' => ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes','Pivote'],
         ]);
     }
 
@@ -55,24 +56,39 @@ class AppointmentsController extends Controller
         $start = Carbon::createFromTimeString($request->start_time);
         $end = Carbon::createFromTimeString($request->end_time);
         $interval = $request->interval_minutes;
-    
-        foreach ($request->selected_days as $day) {
-            $current = $start->copy();
-            while ($current->lt($end)) {
-                $next = $current->copy()->addMinutes($interval);
-    
-                if ($next->gt($end)) break;
-    
+        
+        // Si el intervalo es 0, solo generamos un único horario para cada día seleccionado
+        if ($interval === 0) {
+            foreach ($request->selected_days as $day) {
                 Appointment::create([
                     'id_doctor' => $request->id_doctor,
                     'id_therapy' => $request->id_therapy,
                     'day' => $day,
-                    'start_time' => $current->format('H:i'),
-                    'end_time' => $next->format('H:i'),
+                    'start_time' => $start->format('H:i'),
+                    'end_time' => $end->format('H:i'),
                     'available' => true,
                 ]);
-    
-                $current = $next;
+            }
+        } else {
+            // Si el intervalo es mayor que 0, generamos múltiples citas en los días seleccionados
+            foreach ($request->selected_days as $day) {
+                $current = $start->copy();
+                while ($current->lt($end)) {
+                    $next = $current->copy()->addMinutes($interval);
+
+                    if ($next->gt($end)) break;
+
+                    Appointment::create([
+                        'id_doctor' => $request->id_doctor,
+                        'id_therapy' => $request->id_therapy,
+                        'day' => $day,
+                        'start_time' => $current->format('H:i'),
+                        'end_time' => $next->format('H:i'),
+                        'available' => true,
+                    ]);
+
+                    $current = $next;
+                }
             }
         }
     }
@@ -99,7 +115,7 @@ class AppointmentsController extends Controller
             'appointment' => $appointment,
             'doctors' => $doctors,
             'therapies' => $therapies,
-            'weekdays' => ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'],
+            'weekdays' => ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes','Pivote'],
         ]);
     }
 
@@ -128,5 +144,7 @@ class AppointmentsController extends Controller
     public function destroy(Appointment $appointment)
     {
         $appointment->delete();
+        return redirect()->route('appointments.index')->with('success', 'Cita eliminada.');
+        
     }
 }

@@ -13,7 +13,7 @@ export interface BreadcrumbItem {
 
 export interface NavItem {
     title: string;
-    href: string;
+    href?: string;
     icon?: LucideIcon;
     isActive?: boolean;
 }
@@ -144,19 +144,24 @@ export interface Address {
       id: number;
       name: string;
     };
+    patient: {
+      id: number;
+      name: string;
+      last_name: string;
+    };
   }
 
   export interface Shifts {
     id: number;
-    id_doctor: number;
-    id_patient: number;
-    id_therapy: number;
-    id_appointment: number;
+    id_doctor: number  | null;
+    id_patient: number | null;
+    id_therapy: number | null;
+    id_appointment: number | null;
     is_recurring: boolean | null;
     id_parent_shift: number | null;
     date: string;
-    status: 'pendiente' | 'completado';
-    notes?: string;
+    status: 'pendiente' | 'completada';
+    notes?: string | null;
     doctor?: {
         id: number;
         name: string;

@@ -18,18 +18,18 @@ class Doctor_TherapiesController extends Controller
     {
         $doctorTherapies = Doctor_Therapies::with(['doctor', 'therapy'])->get();
 
-         // IDs de doctores que ya tienen terapia asignada
+        // IDs de doctores que ya tienen terapia asignada
         $assignedDoctorIds = Doctor_Therapies::pluck('id_doctor')->toArray();
 
         // Doctores que aún no tienen una terapia asignada
         $unassignedDoctors = User::where('user_type', 'doctor')
-                            ->whereNotIn('id', $assignedDoctorIds)
-                            ->get();
+        ->whereNotIn('id', $assignedDoctorIds)
+        ->get();
 
         return Inertia::render('doctor_therapies/index', [
-        'doctor_therapies' => $doctorTherapies,
-        'unassignedDoctors' => $unassignedDoctors,
-    ]);
+            'doctor_therapies' => $doctorTherapies,
+            'unassignedDoctors' => $unassignedDoctors,
+        ]);
     }
 
     /**

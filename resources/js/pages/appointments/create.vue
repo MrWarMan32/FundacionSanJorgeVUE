@@ -5,6 +5,7 @@ import { computed, ref } from 'vue';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import Swal from 'sweetalert2';
+import {CircleX} from 'lucide-vue-next';
 
 const breadcrumbs = [
    { title: 'Asignar horarios', href: '#' }
@@ -85,7 +86,7 @@ const submit = () => {
     });
     return;
   }
-
+  
   router.post(route('appointments.store'), form.value, {
     onSuccess: () => {
       Swal.fire({
@@ -94,7 +95,11 @@ const submit = () => {
         text: 'La carga horaria se ha asignado exitosamente.',
         confirmButtonColor: '#3085d6',
       }).then(() => {
-        router.visit(route('doctor_therapies.index'));
+        if (props.doctor && props.therapy) {
+          router.visit(route('doctor_therapies.index'));
+        } else {
+          router.visit(route('appointments.index'));
+        }
       });
     },
     onError: (errors) => {
@@ -206,7 +211,7 @@ const submit = () => {
             <!-- Intervalo -->
             <div>
                 <Label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Intervalo (minutos)</Label>
-                <input type="number" v-model="form.interval_minutes" min="5" step="5" class=" h-8 mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:text-white">
+                <input type="number" v-model="form.interval_minutes" min="0" step="5" class=" h-8 mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:text-white">
             </div>
 
             <Button

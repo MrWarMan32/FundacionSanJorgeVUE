@@ -96,13 +96,13 @@ const deleteDoctorTherapy = (doctorId: number) => {
                       
                       <TableCell class="flex justify-center gap-2">
 
-                      <Button as-child size="sm" class="bg-indigo-500 text-black hover:bg-indigo-700">
+                      <Button as-child size="sm" class="bg-indigo-500 text-black hover:bg-indigo-700" title="Editar terapeuta">
                           <Link :href="route('doctors.edit', dt.id_doctor)">
                           <Pencil />
                           </Link>
                       </Button>
 
-                      <Button as-child size="sm" class="bg-green-500 text-black hover:bg-green-700">
+                      <Button as-child size="sm" class="bg-green-500 text-black hover:bg-green-700" title="Cambiar terapia">
                           <Link :href="route('doctor_therapies.edit', dt.id)">
                           <ArrowLeftRight />
                           </Link>
@@ -115,7 +115,7 @@ const deleteDoctorTherapy = (doctorId: number) => {
                         </Link>
                       </Button>
 
-                      <Button size="sm" class="bg-red-500 text-black hover:bg-red-700" @click="deleteDoctorTherapy(dt.id_doctor)">
+                      <Button size="sm" class="bg-red-500 text-black hover:bg-red-700" @click="deleteDoctorTherapy(dt.id_doctor)" title="Eliminar">
                           <Trash2 />
                       </Button>
 
